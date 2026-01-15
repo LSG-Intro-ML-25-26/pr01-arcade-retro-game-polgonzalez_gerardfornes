@@ -19,7 +19,7 @@ controller.left.on_event(ControllerButtonEvent.PRESSED, on_left_pressed)
 # Boton saltar + gravetat
 def on_a_pressed():
     if nena.is_hitting_tile(CollisionDirection.BOTTOM):
-            nena.vy = -150
+        nena.vy = -150
 nena: Sprite = None
 tiles.set_current_tilemap(tilemap("""
     prova
@@ -33,3 +33,4 @@ nena.set_stay_in_screen(True)
 controller.A.on_event(ControllerButtonEvent.PRESSED, on_a_pressed)
 controller.up.on_event(ControllerButtonEvent.PRESSED, on_a_pressed)
 scene.camera_follow_sprite(nena)
+
