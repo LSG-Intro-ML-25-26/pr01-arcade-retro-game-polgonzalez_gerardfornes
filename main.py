@@ -1,8 +1,4 @@
-"""
-
-Variables Globales
-
-"""
+# Variables Globales
 
 def on_right_pressed():
     animation.run_image_animation(nena,
@@ -45,7 +41,7 @@ bot = sprites.create(assets.image("""
     """), SpriteKind.enemy)
 mySprite20260122T172436281Z = sprites.create(assets.image("""
     helicoptero
-    """), SpriteKind.enemy)
+    """), SpriteKind.food)
 # Crear Jugador (Maduro)
 nena = sprites.create(assets.image("""
     maduro
