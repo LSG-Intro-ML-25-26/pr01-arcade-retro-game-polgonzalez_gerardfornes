@@ -534,7 +534,7 @@ f f f c 3 c c c c 3 c f f f
 . . f f f f f f f f f f . . 
 . c f f f f f f f f f f . . 
 . c f f f f f f f f f f c . 
-. c f f f f f f f f f f c . 
+. c f f f f f f f d f f c . 
 . c f f f f f f d d f f c . 
 . c f f f f b f d d f f c . 
 . c f f f f 1 f d d f c . . 
