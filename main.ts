@@ -94,3 +94,4 @@ game.onUpdate(function () {
     }
 })
 let tanque = sprites.create(assets.image`tanque`, SpriteKind.Player)
+let minita = sprites.create(assets.image`minita`, SpriteKind.Player)
