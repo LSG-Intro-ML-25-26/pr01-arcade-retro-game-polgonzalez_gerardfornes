@@ -45,7 +45,7 @@ tiles.placeOnTile(tanque, tiles.getTileLocation(33, 10))
 // Posicionar personajes
 tiles.placeOnTile(helicopter, tiles.getTileLocation(60, 10))
 // Posicionar personajes
-tiles.placeOnTile(minita, tiles.getTileLocation(15, 11))
+tiles.placeOnTile(minita, tiles.getTileLocation(15, 12))
 // Posicionar personajes
 tiles.placeOnTile(nena, tiles.getTileLocation(6, 9))
 tiles.placeOnTile(bot, tiles.getTileLocation(1, 7))

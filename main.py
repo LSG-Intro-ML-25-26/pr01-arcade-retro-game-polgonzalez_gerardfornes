@@ -61,7 +61,7 @@ tiles.place_on_tile(tanque, tiles.get_tile_location(33, 10))
 # Posicionar personajes
 tiles.place_on_tile(helicopter, tiles.get_tile_location(60, 10))
 # Posicionar personajes
-tiles.place_on_tile(minita, tiles.get_tile_location(15, 11))
+tiles.place_on_tile(minita, tiles.get_tile_location(15, 12))
 # Posicionar personajes
 tiles.place_on_tile(nena, tiles.get_tile_location(6, 9))
 tiles.place_on_tile(bot, tiles.get_tile_location(1, 7))
@@ -95,9 +95,9 @@ def on_on_update():
         if bot_mirando_derecha == True:
             animation.run_image_animation(bot,
                 assets.animation("""
-                    soldado-left
+                    soldado-left0
                     """),
-                200,
+                500,
                 True)
             bot_mirando_derecha = False
     else:
