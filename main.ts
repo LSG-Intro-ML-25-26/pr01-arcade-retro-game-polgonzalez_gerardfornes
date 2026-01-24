@@ -37,7 +37,7 @@ let helicopter = sprites.create(assets.image`helicoptero`, SpriteKind.Obstacle)
 let tanque = sprites.create(assets.image`tanque`, SpriteKind.Obstacle)
 let minita = sprites.create(assets.image`minita`, SpriteKind.Enemy)
 // Crear Bot (Soldado)
-let bot = sprites.create(assets.image`soldado`, SpriteKind.Enemy)
+let bot = sprites.create(assets.image`soldado0`, SpriteKind.Enemy)
 // Crear Jugador (Maduro)
 nena = sprites.create(assets.image`maduro`, SpriteKind.Player)
 // Posicionar personajes
@@ -78,8 +78,8 @@ game.onUpdate(function () {
         if (bot_mirando_derecha == true) {
             animation.runImageAnimation(
             bot,
-            assets.animation`soldado-left`,
-            200,
+            assets.animation`soldado-left0`,
+            500,
             true
             )
             bot_mirando_derecha = false
@@ -90,7 +90,7 @@ game.onUpdate(function () {
         if (bot_mirando_derecha == false) {
             animation.runImageAnimation(
             bot,
-            assets.animation`soldado-right`,
+            assets.animation`soldado-right0`,
             200,
             true
             )

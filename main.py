@@ -50,7 +50,7 @@ minita = sprites.create(assets.image("""
     """), SpriteKind.enemy)
 # Crear Bot (Soldado)
 bot = sprites.create(assets.image("""
-    soldado
+    soldado0
     """), SpriteKind.enemy)
 # Crear Jugador (Maduro)
 nena = sprites.create(assets.image("""
@@ -106,7 +106,7 @@ def on_on_update():
         if bot_mirando_derecha == False:
             animation.run_image_animation(bot,
                 assets.animation("""
-                    soldado-right
+                    soldado-right0
                     """),
                 200,
                 True)
