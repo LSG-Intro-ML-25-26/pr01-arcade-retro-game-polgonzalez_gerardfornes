@@ -307,6 +307,25 @@ f f f c 3 c c c c 3 c f f f
 ...............................................................................
 ...............................................................................
 `;
+            case "image3":
+            case "minita3":return img`
+d d d 1 1 d f f f f f d d d d d 
+d d d d f f e e e e e f f d d d 
+d d b f c e 2 2 e 2 2 e c f d d 
+d d b b e e 2 e 2 e 2 e e b b d 
+d f b c e e 2 e e e 2 e e c c f 
+d f 8 1 c c e e e e e c c 2 e f 
+d f 8 1 8 f c c c c c f 2 b b f 
+d f b 8 8 2 2 2 2 2 2 2 2 b e f 
+d f 2 8 8 1 1 1 1 1 1 1 1 2 e f 
+d f b 2 2 2 2 2 2 2 2 2 2 2 b f 
+d d f e 2 2 2 2 2 2 2 2 2 e f d 
+1 1 d f b 1 1 1 1 1 1 1 b f d d 
+1 1 d d f f 2 2 2 2 2 f f d d d 
+d d d d d d d d d d d d d d d d 
+d d d d d d d d d d d d d d d d 
+d d d d d d d d d d d d d d b d 
+`;
         }
         return null;
     })

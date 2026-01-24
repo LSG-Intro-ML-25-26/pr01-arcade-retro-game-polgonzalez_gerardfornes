@@ -34,6 +34,11 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "minita"
     },
+    "image3": {
+        "data": "hwQQABAAAADd3d3d3R3R3d3d////HdHd3buLuLLf3d3RvxyBKP7d3fHszogost/d/e7OLyES393vIuIsIRLS3e/i7iwhEtLd7y7uLCES0t3v4u4sIRLS3e8i4iwhEtLd/e7OLyES39397M4iIbLf3d2/LLsi/t3d3b3s677f3b3d3f///93d3Q==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "minita3"
+    },
     "anim1": {
         "namespace": "myAnimations",
         "id": "anim1",
