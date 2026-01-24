@@ -1,3 +1,6 @@
+namespace SpriteKind {
+    export const Obstacle = SpriteKind.create()
+}
 // Variables Globales
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
@@ -18,7 +21,7 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
 function on_a_pressed () {
     // Solo salta si está tocando el suelo
     if (nena.isHittingTile(CollisionDirection.Bottom)) {
-        nena.vy = -150
+        nena.vy = -155
     }
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
@@ -30,14 +33,22 @@ let distancia3 = 0
 let nena: Sprite = null
 // Cargar Mapa
 tiles.setCurrentTilemap(tilemap`prova`)
+let helicopter = sprites.create(assets.image`helicoptero`, SpriteKind.Obstacle)
+let tanque = sprites.create(assets.image`tanque`, SpriteKind.Obstacle)
+let minita = sprites.create(assets.image`minita`, SpriteKind.Enemy)
 // Crear Bot (Soldado)
 let bot = sprites.create(assets.image`soldado`, SpriteKind.Enemy)
-let mySprite20260122T172436281Z = sprites.create(assets.image`helicoptero`, SpriteKind.Food)
 // Crear Jugador (Maduro)
 nena = sprites.create(assets.image`maduro`, SpriteKind.Player)
 // Posicionar personajes
-tiles.placeOnTile(nena, tiles.getTileLocation(6, 5))
-tiles.placeOnTile(bot, tiles.getTileLocation(1, 10))
+tiles.placeOnTile(tanque, tiles.getTileLocation(33, 10))
+// Posicionar personajes
+tiles.placeOnTile(helicopter, tiles.getTileLocation(60, 10))
+// Posicionar personajes
+tiles.placeOnTile(minita, tiles.getTileLocation(15, 11))
+// Posicionar personajes
+tiles.placeOnTile(nena, tiles.getTileLocation(6, 9))
+tiles.placeOnTile(bot, tiles.getTileLocation(1, 7))
 // Físicas
 nena.ay = 350
 bot.ay = 350
@@ -89,9 +100,7 @@ game.onUpdate(function () {
     // Salto automático de obstáculos del Bot
     if (bot.isHittingTile(CollisionDirection.Left) || bot.isHittingTile(CollisionDirection.Right)) {
         if (bot.isHittingTile(CollisionDirection.Bottom)) {
-            bot.vy = -150
+            bot.vy = -155
         }
     }
 })
-let tanque = sprites.create(assets.image`tanque`, SpriteKind.Player)
-let minita = sprites.create(assets.image`minita`, SpriteKind.Player)

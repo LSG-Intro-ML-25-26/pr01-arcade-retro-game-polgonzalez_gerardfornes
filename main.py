@@ -1,3 +1,6 @@
+@namespace
+class SpriteKind:
+    Obstacle = SpriteKind.create()
 # Variables Globales
 
 def on_right_pressed():
@@ -21,7 +24,7 @@ controller.left.on_event(ControllerButtonEvent.PRESSED, on_left_pressed)
 def on_a_pressed():
     # Solo salta si está tocando el suelo
     if nena.is_hitting_tile(CollisionDirection.BOTTOM):
-        nena.vy = -150
+        nena.vy = -155
 
 def on_on_overlap(sprite, otherSprite):
     game.over(False)
@@ -35,20 +38,33 @@ nena: Sprite = None
 tiles.set_current_tilemap(tilemap("""
     prova
     """))
+helicopter = sprites.create(assets.image("""
+        helicoptero
+        """),
+    SpriteKind.Obstacle)
+tanque = sprites.create(assets.image("""
+    tanque
+    """), SpriteKind.Obstacle)
+minita = sprites.create(assets.image("""
+    minita
+    """), SpriteKind.enemy)
 # Crear Bot (Soldado)
 bot = sprites.create(assets.image("""
     soldado
     """), SpriteKind.enemy)
-mySprite20260122T172436281Z = sprites.create(assets.image("""
-    helicoptero
-    """), SpriteKind.food)
 # Crear Jugador (Maduro)
 nena = sprites.create(assets.image("""
     maduro
     """), SpriteKind.player)
 # Posicionar personajes
-tiles.place_on_tile(nena, tiles.get_tile_location(6, 5))
-tiles.place_on_tile(bot, tiles.get_tile_location(1, 10))
+tiles.place_on_tile(tanque, tiles.get_tile_location(33, 10))
+# Posicionar personajes
+tiles.place_on_tile(helicopter, tiles.get_tile_location(60, 10))
+# Posicionar personajes
+tiles.place_on_tile(minita, tiles.get_tile_location(15, 11))
+# Posicionar personajes
+tiles.place_on_tile(nena, tiles.get_tile_location(6, 9))
+tiles.place_on_tile(bot, tiles.get_tile_location(1, 7))
 # Físicas
 nena.ay = 350
 bot.ay = 350
@@ -98,5 +114,5 @@ def on_on_update():
     # Salto automático de obstáculos del Bot
     if bot.is_hitting_tile(CollisionDirection.LEFT) or bot.is_hitting_tile(CollisionDirection.RIGHT):
         if bot.is_hitting_tile(CollisionDirection.BOTTOM):
-            bot.vy = -150
+            bot.vy = -155
 game.on_update(on_on_update)
