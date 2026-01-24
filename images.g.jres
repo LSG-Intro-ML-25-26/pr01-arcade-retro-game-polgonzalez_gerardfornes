@@ -39,6 +39,11 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "minita3"
     },
+    "image9": {
+        "data": "hwQQABAAAAAAAAAAAAAAAPD/////////8P/////////wVf////////BV9Q8AAAAA8FVV9Q8AAADwVVWF+AAAAPBVVYWI/wAA8FVVhYgoDwDwVVWFiCjyD/BVVYWIKCLy8FVVhYgoIvLwVVWFiCgi8vBVVYWIKCLy8FVVhYgoIvLwVVWFiCgi8g==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "toldo"
+    },
     "anim1": {
         "namespace": "myAnimations",
         "id": "anim1",

@@ -326,6 +326,25 @@ d d d d d d d d d d d d d d d d
 d d d d d d d d d d d d d d d d 
 d d d d d d d d d d d d d d b d 
 `;
+            case "image9":
+            case "toldo":return img`
+. . . . . . . . . . . . . . . . 
+. f f f f f f f f f f f f f f f 
+. f f 5 5 5 5 5 5 5 5 5 5 5 5 5 
+. f f 5 5 5 5 5 5 5 5 5 5 5 5 5 
+. f f f 5 5 5 5 5 5 5 5 5 5 5 5 
+. f f f f 5 5 5 5 5 5 5 5 5 5 5 
+. f f f f 5 5 5 5 5 5 5 5 5 5 5 
+. f f f . f 8 8 8 8 8 8 8 8 8 8 
+. f f f . f 8 8 8 8 8 8 8 8 8 8 
+. f f f . . f 8 8 8 8 8 8 8 8 8 
+. f f f . . . f 8 8 8 8 8 8 8 8 
+. f f f . . . f 2 2 2 2 2 2 2 2 
+. f f f . . . . f 2 2 2 2 2 2 2 
+. f f f . . . . . f 2 2 2 2 2 2 
+. f f f . . . . . f 2 2 2 2 2 2 
+. f f f . . . . . . f f f f f f 
+`;
         }
         return null;
     })

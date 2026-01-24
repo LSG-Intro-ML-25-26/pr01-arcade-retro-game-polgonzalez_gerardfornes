@@ -1,87 +1,99 @@
 @namespace
 class SpriteKind:
     Obstacle = SpriteKind.create()
+    Trampolin = SpriteKind.create()
 
-def on_right_pressed():
-    animation.run_image_animation(nena,
-        assets.animation("""
-            maduro-right0
-            """),
-        200,
-        True)
-controller.right.on_event(ControllerButtonEvent.PRESSED, on_right_pressed)
+tiles.set_current_tilemap(tilemap("""prova"""))
 
-def on_left_pressed():
-    animation.run_image_animation(nena,
-        assets.animation("""
-            maduro-left
-            """),
-        200,
-        True)
-controller.left.on_event(ControllerButtonEvent.PRESSED, on_left_pressed)
-
-def on_a_pressed():
-    if nena.is_hitting_tile(CollisionDirection.BOTTOM):
-        nena.vy = -155
-
-def on_on_overlap(sprite, otherSprite):
-    game.over(False)
-sprites.on_overlap(SpriteKind.player, SpriteKind.enemy, on_on_overlap)
-
+# Variables Globales
 bot_mirando_derecha = False
 velocidad3 = 0
 distancia3 = 0
 nena: Sprite = None
-tiles.set_current_tilemap(tilemap("""
-    prova
-    """))
-helicopter = sprites.create(assets.image("""
-        helicoptero
-        """),
-    SpriteKind.Obstacle)
-tiles.place_on_tile(helicopter, tiles.get_tile_location(60, 10))
-tanque = sprites.create(assets.image("""
-    tanque
-    """), SpriteKind.Obstacle)
-tiles.place_on_tile(tanque, tiles.get_tile_location(66, 10))
 
-bot = sprites.create(assets.image("""
-    soldado0
-    """), SpriteKind.enemy)
+# Tanques
+tanque = sprites.create(assets.image("""tanque"""), SpriteKind.Obstacle)
+tiles.place_on_tile(tanque, tiles.get_tile_location(116, 10))
+
+tanque02 = sprites.create(assets.image("""tanque"""), SpriteKind.Obstacle)
+tiles.place_on_tile(tanque02, tiles.get_tile_location(146, 10))
+
+# Bot
+bot = sprites.create(assets.image("""soldado0"""), SpriteKind.enemy)
 tiles.place_on_tile(bot, tiles.get_tile_location(1, 7))
-nena = sprites.create(assets.image("""
-    maduro
-    """), SpriteKind.player)
-tiles.place_on_tile(nena, tiles.get_tile_location(6, 9))
-# Crear Minas
-lista_lugares = tiles.get_tiles_by_type(assets.tile("""
-    interrogacion
-    """))
-for lugar in lista_lugares:
-    nueva_minita = sprites.create(assets.image("""
-        minita3
-        """), SpriteKind.enemy)
-    tiles.place_on_tile(nueva_minita, lugar)
-    tiles.set_tile_at(lugar, assets.tile("""
-        transparency16
-        """))
-nena.ay = 350
 bot.ay = 350
+
+# Maduro
+nena = sprites.create(assets.image("""maduro"""), SpriteKind.player)
+tiles.place_on_tile(nena, tiles.get_tile_location(6, 9))
+nena.ay = 350
 nena.set_stay_in_screen(True)
 scene.camera_follow_sprite(nena)
-#CUENTA REGRESIVA
-controller.move_sprite(nena, 0, 0)
-for i in range(3):
-    numero = 3 - i
-    nena.say_text("" + str(numero), 1000, True)
+
+
+# Minas
+lista_minas = tiles.get_tiles_by_type(assets.tile("""interrogacion"""))
+for i in range(len(lista_minas)):
+    lugar = lista_minas[i]
+    nueva_minita = sprites.create(assets.image("""minita3"""), SpriteKind.enemy)
+    tiles.place_on_tile(nueva_minita, lugar)
+    tiles.set_tile_at(lugar, assets.tile("""transparency16"""))
+
+#Salto Toldos
+partes_toldo = [
+    assets.tile("""toldo01"""),
+    assets.tile("""toldo02"""),
+    assets.tile("""toldo03"""),
+    assets.tile("""toldo04""")
+]
+
+for t in range(len(partes_toldo)):
+    tipo_actual = partes_toldo[t]
+    
+    lista_lugares_toldo = tiles.get_tiles_by_type(tipo_actual)
+    
+    for k in range(len(lista_lugares_toldo)):
+        lugar_t = lista_lugares_toldo[k]
+        
+        nuevo_toldo = sprites.create(tipo_actual, SpriteKind.Trampolin)
+        tiles.place_on_tile(nuevo_toldo, lugar_t)
+        
+        tiles.set_tile_at(lugar_t, assets.tile("""transparency16"""))
+
+
+# CUENTA REGRESIVA
+for k in range(3):
+    numero = 3 - k
+    if nena:
+        nena.say_text("" + str(numero), 1000, True)
     pause(1000)
-nena.say_text("¡CORRE!", 500, True)
+
+if nena:
+    nena.say_text("¡CORRE!", 500, True)
+
 controller.move_sprite(nena, 100, 0)
+
+
+def on_right_pressed():
+    if nena:
+        animation.run_image_animation(nena, assets.animation("""maduro-right0"""), 200, True)
+controller.right.on_event(ControllerButtonEvent.PRESSED, on_right_pressed)
+
+def on_left_pressed():
+    if nena:
+        animation.run_image_animation(nena, assets.animation("""maduro-left"""), 200, True)
+controller.left.on_event(ControllerButtonEvent.PRESSED, on_left_pressed)
+
+def on_a_pressed():
+    if nena and nena.is_hitting_tile(CollisionDirection.BOTTOM):
+        nena.vy = -155
 controller.A.on_event(ControllerButtonEvent.PRESSED, on_a_pressed)
 controller.up.on_event(ControllerButtonEvent.PRESSED, on_a_pressed)
 
 def on_on_update():
     global distancia3, velocidad3, bot_mirando_derecha
+    if not nena or not bot: return
+
     distancia3 = abs(nena.x - bot.x)
     if distancia3 > 90:
         velocidad3 = 320
@@ -89,29 +101,34 @@ def on_on_update():
         velocidad3 = 190
     else:
         velocidad3 = 95
-    # Movimiento Bot
+        
     if nena.x < bot.x:
         bot.vx = 0 - velocidad3
         if bot_mirando_derecha == True:
-            animation.run_image_animation(bot,
-                assets.animation("""
-                    soldado-left0
-                    """),
-                500,
-                True)
+            animation.run_image_animation(bot, assets.animation("""soldado-left0"""), 500, True)
             bot_mirando_derecha = False
     else:
         bot.vx = velocidad3
         if bot_mirando_derecha == False:
-            animation.run_image_animation(bot,
-                assets.animation("""
-                    soldado-right0
-                    """),
-                200,
-                True)
+            animation.run_image_animation(bot, assets.animation("""soldado-right0"""), 200, True)
             bot_mirando_derecha = True
-    # Salto Bot
+            
     if bot.is_hitting_tile(CollisionDirection.LEFT) or bot.is_hitting_tile(CollisionDirection.RIGHT):
         if bot.is_hitting_tile(CollisionDirection.BOTTOM):
             bot.vy = -155
 game.on_update(on_on_update)
+
+def on_enemy_overlap(sprite, otherSprite):
+    game.over(False)
+sprites.on_overlap(SpriteKind.player, SpriteKind.enemy, on_enemy_overlap)
+
+def on_toldo_overlap(sprite, otherSprite):
+    if nena:
+        nena.vy = -250
+        
+        if nena.vx > 0:
+            nena.vx = 250
+        else:
+            nena.vx = -250
+            
+sprites.on_overlap(SpriteKind.player, SpriteKind.Trampolin, on_toldo_overlap)
