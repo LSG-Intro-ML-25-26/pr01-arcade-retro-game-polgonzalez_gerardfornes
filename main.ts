@@ -8,12 +8,15 @@ namespace SpriteKind {
     export const Meta = SpriteKind.create()
 }
 
+//  Projectile existe por defecto
 //  --- 1. VARIABLES GLOBALES ---
 let bot_mirando_derecha = false
 let velocidad3 = 0
 let distancia3 = 0
 let juego_empezado = false
 let tiempo_inicio = 0
+let probabilidad_bomba = 100
+//  Empezamos con 100% de probabilidad de lluvia de bombas
 //  PROGRESO
 let nivel_desbloqueado = 1
 let nivel_actual = 0
@@ -22,10 +25,22 @@ let nena : Sprite = null
 let bot : Sprite = null
 let tanque : Sprite = null
 let tanque02 : Sprite = null
+let mySpriteBarco : Sprite = null
+let mySpriteBarco2 : Sprite = null
+//  Variable cursor
+let cursor : Sprite = null
 //  Variables para los iconos
 let icono1 : Sprite = null
 let icono2 : Sprite = null
 let icono3 : Sprite = null
+//  Listas y contadores
+let lista_cursores : Sprite[] = []
+let l = 0
+let t = 0
+let partes_toldo : Image[] = []
+let i = 0
+let lista_minas : tiles.Location[] = []
+let tiempo_final = 0
 //  ---------------------------------------------------------
 //  FASE 1: MENÚ INICIAL
 //  ---------------------------------------------------------
@@ -121,6 +136,8 @@ function selector_de_mapa() {
     sprites.destroyAllSpritesOfKind(SpriteKind.Trampolin)
     sprites.destroyAllSpritesOfKind(SpriteKind.UI)
     sprites.destroyAllSpritesOfKind(SpriteKind.Meta)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Fondo)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Projectile)
     pause(200)
     //  1. TILEMAP
     if (assets.tile`mundo_grande`) {
@@ -138,7 +155,7 @@ function selector_de_mapa() {
     }
     
     //  3. CURSOR
-    let cursor = sprites.create(assets.image`maduro`, SpriteKind.Cursor)
+    cursor = sprites.create(assets.image`maduro`, SpriteKind.Cursor)
     tiles.placeOnTile(cursor, tiles.getTileLocation(10, 26))
     controller.moveSprite(cursor, 150, 150)
     scene.cameraFollowSprite(cursor)
@@ -216,9 +233,12 @@ function iniciar_nivel_1() {
     let numero: number;
     
     nivel_actual = 1
+    //  Reiniciar probabilidad al iniciar nivel
+    probabilidad_bomba = 100
     sprites.destroyAllSpritesOfKind(SpriteKind.Fondo)
     sprites.destroyAllSpritesOfKind(SpriteKind.Cursor)
     sprites.destroyAllSpritesOfKind(SpriteKind.IconoNivel)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Projectile)
     scene.setBackgroundImage(null)
     info.showScore(true)
     info.setScore(0)
@@ -228,7 +248,7 @@ function iniciar_nivel_1() {
     tiles.placeOnTile(tanque, tiles.getTileLocation(116, 10))
     tanque02 = sprites.create(assets.image`tanque`, SpriteKind.Obstacle)
     tiles.placeOnTile(tanque02, tiles.getTileLocation(146, 10))
-    let mySpriteBarco = sprites.create(assets.image`barco venezuela`, SpriteKind.Meta)
+    mySpriteBarco = sprites.create(assets.image`barco venezuela`, SpriteKind.Meta)
     tiles.placeOnTile(mySpriteBarco, tiles.getTileLocation(245, 10))
     bot = sprites.create(assets.image`soldado0`, SpriteKind.Enemy)
     tiles.placeOnTile(bot, tiles.getTileLocation(1, 7))
@@ -239,7 +259,7 @@ function iniciar_nivel_1() {
     nena.setStayInScreen(true)
     scene.cameraFollowSprite(nena)
     let lista_minas = tiles.getTilesByType(assets.tile`interrogacion`)
-    let i = 0
+    i = 0
     while (i < lista_minas.length) {
         lugar = lista_minas[i]
         nueva_minita = sprites.create(assets.image`minita3`, SpriteKind.Enemy)
@@ -247,7 +267,7 @@ function iniciar_nivel_1() {
         i += 1
     }
     let partes_toldo = [assets.tile`toldo01`, assets.tile`toldo02`, assets.tile`toldo03`, assets.tile`toldo04`]
-    let t = 0
+    t = 0
     while (t < partes_toldo.length) {
         tipo_actual = partes_toldo[t]
         lista_lugares_toldo = tiles.getTilesByType(tipo_actual)
@@ -290,77 +310,89 @@ function iniciar_nivel_1() {
 //  FASE 5: JUEGO REAL (NIVEL 2)
 //  ---------------------------------------------------------
 function iniciar_nivel_2() {
-    let numero: number;
+    let numero_cuenta: number;
     
     nivel_actual = 2
+    //  Probabilidad inicial de bombas: 100%
+    probabilidad_bomba = 100
+    //  Limpieza segura
     sprites.destroyAllSpritesOfKind(SpriteKind.Fondo)
     sprites.destroyAllSpritesOfKind(SpriteKind.Cursor)
     sprites.destroyAllSpritesOfKind(SpriteKind.IconoNivel)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Projectile)
     scene.setBackgroundImage(null)
     info.showScore(true)
     info.setScore(0)
+    //  Cargar mapa
     tiles.setCurrentTilemap(tilemap`nivel02`)
-    //  Creamos el sprite con maduro base
-    if (assets.image`maduro`) {
-        nena = sprites.create(assets.image`maduro`, SpriteKind.Player)
+    //  --- DECORACIÓN DE FONDO (OLAS) ---
+    let img_ola = null
+    if (assets.image`ola`) {
+        img_ola = assets.image`ola`
     } else {
-        nena = sprites.create(img`
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-        `, SpriteKind.Player)
+        img_ola = img`
+            8 8 8 8 8 8 8 8
+            8 8 8 8 8 8 8 8
+            8 8 8 8 8 8 8 8
+            8 8 8 8 8 8 8 8
+        `
     }
     
-    //  Activamos la lancha
-    if (assets.animation`maduro-lancha-right`) {
-        animation.runImageAnimation(nena, assets.animation`maduro-lancha-right`, 200, true)
+    let ola1 = sprites.create(img_ola, SpriteKind.Fondo)
+    tiles.placeOnTile(ola1, tiles.getTileLocation(50, 12))
+    ola1.z = 1
+    ola1.ay = 0
+    ola1.setFlag(SpriteFlag.Ghost, true)
+    let ola2 = sprites.create(img_ola, SpriteKind.Fondo)
+    tiles.placeOnTile(ola2, tiles.getTileLocation(130, 13))
+    ola2.z = 1
+    ola2.ay = 0
+    ola2.setFlag(SpriteFlag.Ghost, true)
+    let ola3 = sprites.create(img_ola, SpriteKind.Fondo)
+    tiles.placeOnTile(ola3, tiles.getTileLocation(200, 12))
+    ola3.z = 1
+    ola3.ay = 0
+    ola3.setFlag(SpriteFlag.Ghost, true)
+    //  --- JUGADOR (LANCHA) ---
+    if (assets.image`maduro-lancha-right`) {
+        nena = sprites.create(assets.image`maduro-lancha-right`, SpriteKind.Player)
+    } else {
+        nena = sprites.create(assets.image`maduro`, SpriteKind.Player)
     }
     
+    nena.z = 2
     tiles.placeOnTile(nena, tiles.getTileLocation(11, 10))
     nena.ay = 350
     nena.setStayInScreen(true)
     scene.cameraFollowSprite(nena)
+    //  --- ENEMIGO (USARMY) ---
     bot = sprites.create(assets.image`usarmy`, SpriteKind.Enemy)
     tiles.placeOnTile(bot, tiles.getTileLocation(4, 9))
     bot.ay = 350
     bot.setBounceOnWall(true)
-    let mySpriteBarco = sprites.create(assets.image`barco venezuela`, SpriteKind.Meta)
-    tiles.placeOnTile(mySpriteBarco, tiles.getTileLocation(270, 10))
-    //  --- CUENTA ATRÁS ---
-    //  1. Congelamos al jugador
+    //  --- META (BARCO VENEZUELA) ---
+    mySpriteBarco2 = sprites.create(assets.image`barco venezuela`, SpriteKind.Meta)
+    tiles.placeOnTile(mySpriteBarco2, tiles.getTileLocation(240, 10))
+    //  ==============================
+    //       CUENTA ATRÁS (3, 2, 1)
+    //  ==============================
     controller.moveSprite(nena, 0, 0)
-    //  2. Bucle de 3 segundos
-    let k = 0
-    while (k < 3) {
-        numero = 3 - k
+    l = 0
+    while (l < 3) {
+        numero_cuenta = 3 - l
         if (nena) {
-            nena.sayText("" + numero, 1000, true)
+            nena.sayText("" + numero_cuenta, 1000, true)
         }
         
         pause(1000)
-        k += 1
+        l += 1
     }
     if (nena) {
         nena.sayText("¡YA!", 500, true)
     }
     
-    //  3. Empezamos el juego
     juego_empezado = true
     controller.moveSprite(nena, 100, 0)
-    //  4. Reiniciamos el cronómetro AHORA, para que no cuente los 3 segundos de espera
     tiempo_inicio = game.runtime()
 }
 
@@ -377,7 +409,7 @@ function game_over_personalizado() {
 //  --- GESTIÓN DE VICTORIAS ---
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Meta, function on_nivel_completado(sprite: Sprite, otherSprite: Sprite) {
     
-    let tiempo_final = info.score()
+    tiempo_final = info.score()
     if (nivel_actual == 1) {
         game.splash("¡NIVEL 1 SUPERADO!", "Tiempo: " + ("" + tiempo_final) + "s")
         if (nivel_desbloqueado < 2) {
@@ -413,7 +445,6 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function on_right_presse
         if (nivel_actual == 1) {
             animation.runImageAnimation(nena, assets.animation`maduro-right0`, 200, true)
         } else if (nivel_actual == 2) {
-            //  En Nivel 2 cambiamos la IMAGEN, no la animación
             if (assets.image`maduro-lancha-right`) {
                 nena.setImage(assets.image`maduro-lancha-right`)
             }
@@ -428,7 +459,6 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function on_left_pressed(
         if (nivel_actual == 1) {
             animation.runImageAnimation(nena, assets.animation`maduro-left`, 200, true)
         } else if (nivel_actual == 2) {
-            //  En Nivel 2 cambiamos la IMAGEN, no la animación
             if (assets.image`maduro-lancha-left`) {
                 nena.setImage(assets.image`maduro-lancha-left`)
             }
@@ -449,6 +479,58 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, on_a_pressed)
 controller.up.onEvent(ControllerButtonEvent.Pressed, on_a_pressed)
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function on_on_overlap2(sprite2: Sprite, otherSprite2: Sprite) {
     game_over_personalizado()
+})
+//  ==========================================
+//    SISTEMA DE LLUVIA DE BOMBAS (CON LÓGICA DE SUELO)
+//  ==========================================
+//  1. GENERADOR DE BOMBAS (CONTROLADO POR PROBABILIDAD)
+game.onUpdateInterval(1000, function generar_bomba() {
+    let cam_x: number;
+    let cam_top: number;
+    let img_bomba: Image;
+    let bomba: Sprite;
+    
+    //  Solo caen si el juego ha empezado y si la suerte lo decide
+    if (juego_empezado && randint(0, 100) < probabilidad_bomba) {
+        cam_x = scene.cameraProperty(CameraProperty.X)
+        cam_top = scene.cameraProperty(CameraProperty.Top)
+        img_bomba = null
+        if (assets.image`bomba`) {
+            img_bomba = assets.image`bomba`
+        } else {
+            img_bomba = img`
+                2 2 2 2
+                2 2 2 2
+                2 2 2 2
+                2 2 2 2
+            `
+        }
+        
+        bomba = sprites.create(img_bomba, SpriteKind.Projectile)
+        bomba.setPosition(randint(cam_x - 100, cam_x + 100), cam_top)
+        bomba.vy = 100
+        bomba.z = 100
+        bomba.setFlag(SpriteFlag.AutoDestroy, true)
+    }
+    
+})
+//  2. COLISIÓN JUGADOR - BOMBA
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function on_player_hit_bomb(player: Sprite, bomb: Sprite) {
+    bomb.destroy(effects.fire, 100)
+    game_over_personalizado()
+})
+//  3. BOMBA TOCA EL SUELO (REDUCE PROBABILIDAD)
+//  Opcional: Mensaje debug para ver que funciona
+//  nena.say_text(str(probabilidad_bomba) + "%", 500, True)
+scene.onHitWall(SpriteKind.Projectile, function on_bomb_hit_wall(bomb: Sprite, location: tiles.Location) {
+    
+    //  Efecto visual
+    bomb.destroy(effects.disintegrate, 100)
+    //  Reducimos probabilidad (mínimo 10%)
+    if (probabilidad_bomba > 10) {
+        probabilidad_bomba -= 10
+    }
+    
 })
 //  LÓGICA PRINCIPAL (UPDATE)
 let tiles_petroleo = [assets.tile`petroleo0`, assets.tile`petroleo02`, assets.tile`petroleo1`]
@@ -567,5 +649,4 @@ game.onUpdate(function debug_coordenadas_mapa() {
     
 })
 //  --- INICIO DEL JUEGO ---
-// menu_inicial()
 iniciar_nivel_2()

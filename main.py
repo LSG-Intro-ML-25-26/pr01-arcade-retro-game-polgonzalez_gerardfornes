@@ -7,6 +7,7 @@ class SpriteKind:
     UI = SpriteKind.create()
     Fondo = SpriteKind.create()
     Meta = SpriteKind.create()
+    # Projectile existe por defecto
 
 # --- 1. VARIABLES GLOBALES ---
 bot_mirando_derecha = False
@@ -14,6 +15,7 @@ velocidad3 = 0
 distancia3 = 0
 juego_empezado = False
 tiempo_inicio = 0
+probabilidad_bomba = 100 # Empezamos con 100% de probabilidad de lluvia de bombas
 
 # PROGRESO
 nivel_desbloqueado = 1
@@ -24,11 +26,25 @@ nena: Sprite = None
 bot: Sprite = None
 tanque: Sprite = None
 tanque02: Sprite = None
+mySpriteBarco: Sprite = None
+mySpriteBarco2: Sprite = None
+
+# Variable cursor
+cursor: Sprite = None
 
 # Variables para los iconos
 icono1: Sprite = None
 icono2: Sprite = None
 icono3: Sprite = None
+
+# Listas y contadores
+lista_cursores: List[Sprite] = []
+l = 0
+t = 0
+partes_toldo: List[Image] = []
+i = 0
+lista_minas: List[tiles.Location] = []
+tiempo_final = 0
 
 # ---------------------------------------------------------
 # FASE 1: MENÚ INICIAL
@@ -94,7 +110,7 @@ def cinematica_lore():
 # FASE 3: SELECTOR DE MAPA
 # ---------------------------------------------------------
 def selector_de_mapa():
-    global juego_empezado, nena, bot, icono1, icono2, icono3
+    global juego_empezado, nena, bot, icono1, icono2, icono3, cursor
     
     juego_empezado = False
     nena = None
@@ -114,6 +130,8 @@ def selector_de_mapa():
     sprites.destroy_all_sprites_of_kind(SpriteKind.Trampolin)
     sprites.destroy_all_sprites_of_kind(SpriteKind.UI)
     sprites.destroy_all_sprites_of_kind(SpriteKind.Meta)
+    sprites.destroy_all_sprites_of_kind(SpriteKind.Fondo)
+    sprites.destroy_all_sprites_of_kind(SpriteKind.Projectile)
     pause(200)
     
     # 1. TILEMAP
@@ -190,13 +208,16 @@ sprites.on_overlap(SpriteKind.Cursor, SpriteKind.IconoNivel, on_mapa_overlap)
 # FASE 4: JUEGO REAL (NIVEL 1)
 # ---------------------------------------------------------
 def iniciar_nivel_1():
-    global tanque, tanque02, bot, nena, juego_empezado, tiempo_inicio, nivel_actual
+    global tanque, tanque02, bot, nena, juego_empezado, tiempo_inicio, nivel_actual, mySpriteBarco, i, t, probabilidad_bomba
     
     nivel_actual = 1
+    # Reiniciar probabilidad al iniciar nivel
+    probabilidad_bomba = 100
     
     sprites.destroy_all_sprites_of_kind(SpriteKind.Fondo)
     sprites.destroy_all_sprites_of_kind(SpriteKind.Cursor)
     sprites.destroy_all_sprites_of_kind(SpriteKind.IconoNivel)
+    sprites.destroy_all_sprites_of_kind(SpriteKind.Projectile)
     scene.set_background_image(None)
     
     info.show_score(True)
@@ -272,81 +293,97 @@ def iniciar_nivel_1():
 # FASE 5: JUEGO REAL (NIVEL 2)
 # ---------------------------------------------------------
 def iniciar_nivel_2():
-    global bot, nena, juego_empezado, tiempo_inicio, nivel_actual
+    global nivel_actual, nena, bot, mySpriteBarco2, l, juego_empezado, tiempo_inicio, probabilidad_bomba
     
     nivel_actual = 2
+    # Probabilidad inicial de bombas: 100%
+    probabilidad_bomba = 100
     
+    # Limpieza segura
     sprites.destroy_all_sprites_of_kind(SpriteKind.Fondo)
     sprites.destroy_all_sprites_of_kind(SpriteKind.Cursor)
     sprites.destroy_all_sprites_of_kind(SpriteKind.IconoNivel)
+    sprites.destroy_all_sprites_of_kind(SpriteKind.Projectile)
     scene.set_background_image(None)
     
     info.show_score(True)
     info.set_score(0)
     
+    # Cargar mapa
     tiles.set_current_tilemap(tilemap("nivel02"))
-    
-    # Creamos el sprite con maduro base
-    if assets.image("maduro"):
-        nena = sprites.create(assets.image("maduro"), SpriteKind.player)
-    else:
-        nena = sprites.create(img("""
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-            . . . . . . . . . . . . . . . .
-        """), SpriteKind.player)
 
-    # Activamos la lancha
-    if assets.animation("maduro-lancha-right"):
-        animation.run_image_animation(nena, assets.animation("maduro-lancha-right"), 200, True)
+    # --- DECORACIÓN DE FONDO (OLAS) ---
+    img_ola = None
+    if assets.image("ola"):
+        img_ola = assets.image("ola")
+    else:
+        img_ola = img("""
+            8 8 8 8 8 8 8 8
+            8 8 8 8 8 8 8 8
+            8 8 8 8 8 8 8 8
+            8 8 8 8 8 8 8 8
+        """)
+
+    ola1 = sprites.create(img_ola, SpriteKind.Fondo)
+    tiles.place_on_tile(ola1, tiles.get_tile_location(50, 12))
+    ola1.z = 1
+    ola1.ay = 0
+    ola1.set_flag(SpriteFlag.GHOST, True)
+
+    ola2 = sprites.create(img_ola, SpriteKind.Fondo)
+    tiles.place_on_tile(ola2, tiles.get_tile_location(130, 13))
+    ola2.z = 1
+    ola2.ay = 0
+    ola2.set_flag(SpriteFlag.GHOST, True)
+
+    ola3 = sprites.create(img_ola, SpriteKind.Fondo)
+    tiles.place_on_tile(ola3, tiles.get_tile_location(200, 12))
+    ola3.z = 1
+    ola3.ay = 0
+    ola3.set_flag(SpriteFlag.GHOST, True)
     
+    # --- JUGADOR (LANCHA) ---
+    if assets.image("maduro-lancha-right"):
+        nena = sprites.create(assets.image("maduro-lancha-right"), SpriteKind.player)
+    else:
+        nena = sprites.create(assets.image("maduro"), SpriteKind.player)
+    
+    nena.z = 2
     tiles.place_on_tile(nena, tiles.get_tile_location(11, 10))
     nena.ay = 350
     nena.set_stay_in_screen(True)
     scene.camera_follow_sprite(nena)
     
+    # --- ENEMIGO (USARMY) ---
     bot = sprites.create(assets.image("usarmy"), SpriteKind.enemy)
     tiles.place_on_tile(bot, tiles.get_tile_location(4, 9))
     bot.ay = 350
     bot.set_bounce_on_wall(True)
     
-    mySpriteBarco = sprites.create(assets.image("barco venezuela"), SpriteKind.Meta)
-    tiles.place_on_tile(mySpriteBarco, tiles.get_tile_location(270, 10))
+    # --- META (BARCO VENEZUELA) ---
+    mySpriteBarco2 = sprites.create(assets.image("barco venezuela"), SpriteKind.Meta)
+    tiles.place_on_tile(mySpriteBarco2, tiles.get_tile_location(240, 10))
     
-    # --- CUENTA ATRÁS ---
-    # 1. Congelamos al jugador
+    # ==============================
+    #      CUENTA ATRÁS (3, 2, 1)
+    # ==============================
+    
     controller.move_sprite(nena, 0, 0)
     
-    # 2. Bucle de 3 segundos
-    k = 0
-    while k < 3:
-        numero = 3 - k
+    l = 0
+    while l < 3:
+        numero_cuenta = 3 - l
         if nena:
-            nena.say_text(str(numero), 1000, True)
+            nena.say_text(str(numero_cuenta), 1000, True)
         pause(1000)
-        k += 1
+        l += 1
         
     if nena:
         nena.say_text("¡YA!", 500, True)
     
-    # 3. Empezamos el juego
     juego_empezado = True
     controller.move_sprite(nena, 100, 0)
     
-    # 4. Reiniciamos el cronómetro AHORA, para que no cuente los 3 segundos de espera
     tiempo_inicio = game.runtime()
 
 # ---------------------------------------------------------
@@ -361,7 +398,7 @@ def game_over_personalizado():
 
 # --- GESTIÓN DE VICTORIAS ---
 def on_nivel_completado(sprite, otherSprite):
-    global nivel_desbloqueado
+    global nivel_desbloqueado, tiempo_final
     
     tiempo_final = info.score()
     
@@ -395,7 +432,6 @@ def on_right_pressed():
         if nivel_actual == 1:
             animation.run_image_animation(nena, assets.animation("maduro-right0"), 200, True)
         elif nivel_actual == 2:
-            # En Nivel 2 cambiamos la IMAGEN, no la animación
             if assets.image("maduro-lancha-right"):
                 nena.set_image(assets.image("maduro-lancha-right"))
             
@@ -406,7 +442,6 @@ def on_left_pressed():
         if nivel_actual == 1:
             animation.run_image_animation(nena, assets.animation("maduro-left"), 200, True)
         elif nivel_actual == 2:
-            # En Nivel 2 cambiamos la IMAGEN, no la animación
             if assets.image("maduro-lancha-left"):
                 nena.set_image(assets.image("maduro-lancha-left"))
             
@@ -421,6 +456,58 @@ controller.up.on_event(ControllerButtonEvent.PRESSED, on_a_pressed)
 def on_on_overlap2(sprite2, otherSprite2):
     game_over_personalizado()
 sprites.on_overlap(SpriteKind.player, SpriteKind.enemy, on_on_overlap2)
+
+# ==========================================
+#   SISTEMA DE LLUVIA DE BOMBAS (CON LÓGICA DE SUELO)
+# ==========================================
+
+# 1. GENERADOR DE BOMBAS (CONTROLADO POR PROBABILIDAD)
+def generar_bomba():
+    global probabilidad_bomba
+    
+    # Solo caen si el juego ha empezado y si la suerte lo decide
+    if juego_empezado and randint(0, 100) < probabilidad_bomba:
+        cam_x = scene.camera_property(CameraProperty.X)
+        cam_top = scene.camera_property(CameraProperty.Top)
+        
+        img_bomba = None
+        if assets.image("bomba"):
+            img_bomba = assets.image("bomba")
+        else:
+            img_bomba = img("""
+                2 2 2 2
+                2 2 2 2
+                2 2 2 2
+                2 2 2 2
+            """)
+            
+        bomba = sprites.create(img_bomba, SpriteKind.Projectile)
+        bomba.set_position(randint(cam_x - 100, cam_x + 100), cam_top)
+        bomba.vy = 100
+        bomba.z = 100
+        bomba.set_flag(SpriteFlag.AUTO_DESTROY, True)
+
+game.on_update_interval(1000, generar_bomba)
+
+# 2. COLISIÓN JUGADOR - BOMBA
+def on_player_hit_bomb(player, bomb):
+    bomb.destroy(effects.fire, 100)
+    game_over_personalizado()
+
+sprites.on_overlap(SpriteKind.player, SpriteKind.Projectile, on_player_hit_bomb)
+
+# 3. BOMBA TOCA EL SUELO (REDUCE PROBABILIDAD)
+def on_bomb_hit_wall(bomb, location):
+    global probabilidad_bomba
+    # Efecto visual
+    bomb.destroy(effects.disintegrate, 100)
+    # Reducimos probabilidad (mínimo 10%)
+    if probabilidad_bomba > 10:
+        probabilidad_bomba -= 10
+        # Opcional: Mensaje debug para ver que funciona
+        # nena.say_text(str(probabilidad_bomba) + "%", 500, True)
+
+scene.on_hit_wall(SpriteKind.Projectile, on_bomb_hit_wall)
 
 # LÓGICA PRINCIPAL (UPDATE)
 tiles_petroleo = [
@@ -507,5 +594,4 @@ def debug_coordenadas_mapa():
 game.on_update(debug_coordenadas_mapa)
 
 # --- INICIO DEL JUEGO ---
-#menu_inicial()
-iniciar_nivel_2()
+iniciar_nivel_2() # PRUEBA DIRECTA NIVEL 2
