@@ -124,6 +124,16 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "usarmy"
     },
+    "image26": {
+        "data": "hwQQABAAAAAAAF8hD/D/AAAAXygP8FUPAAD/////VfUAAAAAAPBV9QDw//8P8FX1AP/8/w/wVfXw//zf/fCI+PDMz9/9/4j4///8/93/iPj//8+/0f2I+M/P///f/Yj4//z/3c39IvL//N/dzfEi8vD////8/yLyAP///w/wIg8AAP//APD/AA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "maduro-lancha-right"
+    },
+    "image27": {
+        "data": "hwQQABAAAAAAAP//APD/AAD///8P8CIP8P////z/IvL//N/dzfEi8v/8/93N/SLyz8///9/9iPj//8+/0f2I+P///P/d/4j48MzP3/3/iPjw//zf/fCI+AD//P8P8FX1APD//w/wVfUAAAAAAPBV9QAA/////1X1AABfKA/wVQ8AAF8hD/D/AA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "maduro-lancha-left"
+    },
     "anim1": {
         "namespace": "myAnimations",
         "id": "anim1",

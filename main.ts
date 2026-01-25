@@ -8,20 +8,27 @@ namespace SpriteKind {
     export const Meta = SpriteKind.create()
 }
 
+//  --- 1. VARIABLES GLOBALES ---
 let bot_mirando_derecha = false
 let velocidad3 = 0
 let distancia3 = 0
 let juego_empezado = false
 let tiempo_inicio = 0
+//  PROGRESO
 let nivel_desbloqueado = 1
 let nivel_actual = 0
+//  Personajes y objetos
 let nena : Sprite = null
 let bot : Sprite = null
 let tanque : Sprite = null
 let tanque02 : Sprite = null
+//  Variables para los iconos
 let icono1 : Sprite = null
 let icono2 : Sprite = null
 let icono3 : Sprite = null
+//  ---------------------------------------------------------
+//  FASE 1: MENÚ INICIAL
+//  ---------------------------------------------------------
 function menu_inicial() {
     let boton_play: Sprite;
     if (assets.image`escape-to-usa2`) {
@@ -51,6 +58,9 @@ function menu_inicial() {
     cinematica_lore()
 }
 
+//  ---------------------------------------------------------
+//  FASE 2: CINEMÁTICA
+//  ---------------------------------------------------------
 function cinematica_lore() {
     if (assets.image`mapausa`) {
         scene.setBackgroundImage(assets.image`mapausa`)
@@ -90,6 +100,9 @@ function cinematica_lore() {
     selector_de_mapa()
 }
 
+//  ---------------------------------------------------------
+//  FASE 3: SELECTOR DE MAPA
+//  ---------------------------------------------------------
 function selector_de_mapa() {
     let mapa_visual: Sprite;
     
@@ -100,19 +113,23 @@ function selector_de_mapa() {
     info.showScore(false)
     scene.setBackgroundImage(null)
     scene.setBackgroundColor(9)
+    //  Limpieza segura
+    pause(100)
     sprites.destroyAllSpritesOfKind(SpriteKind.Player)
     sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
     sprites.destroyAllSpritesOfKind(SpriteKind.Obstacle)
     sprites.destroyAllSpritesOfKind(SpriteKind.Trampolin)
     sprites.destroyAllSpritesOfKind(SpriteKind.UI)
     sprites.destroyAllSpritesOfKind(SpriteKind.Meta)
-    pause(500)
+    pause(200)
+    //  1. TILEMAP
     if (assets.tile`mundo_grande`) {
         tiles.setCurrentTilemap(tilemap`mundo_grande`)
     } else {
         tiles.setCurrentTilemap(tilemap`level1`)
     }
     
+    //  2. FONDO GIGANTE
     if (assets.image`mapamundi2`) {
         mapa_visual = sprites.create(assets.image`mapamundi2`, SpriteKind.Fondo)
         mapa_visual.z = -100
@@ -120,11 +137,13 @@ function selector_de_mapa() {
         mapa_visual.setPosition(400, 400)
     }
     
+    //  3. CURSOR
     let cursor = sprites.create(assets.image`maduro`, SpriteKind.Cursor)
     tiles.placeOnTile(cursor, tiles.getTileLocation(10, 26))
     controller.moveSprite(cursor, 150, 150)
     scene.cameraFollowSprite(cursor)
     cursor.setStayInScreen(true)
+    //  --- PUNTOS DE NIVEL ---
     if (assets.image`venezuela0`) {
         icono1 = sprites.create(assets.image`venezuela0`, SpriteKind.IconoNivel)
         tiles.placeOnTile(icono1, tiles.getTileLocation(12, 26))
@@ -156,6 +175,7 @@ function selector_de_mapa() {
     game.splash("Elige un nivel")
 }
 
+//  --- LÓGICA DE CHOQUE EN EL MAPA ---
 sprites.onOverlap(SpriteKind.Cursor, SpriteKind.IconoNivel, function on_mapa_overlap(sprite: Sprite, otherSprite: Sprite) {
     if (controller.A.isPressed()) {
         if (otherSprite == icono1) {
@@ -182,6 +202,9 @@ sprites.onOverlap(SpriteKind.Cursor, SpriteKind.IconoNivel, function on_mapa_ove
     }
     
 })
+//  ---------------------------------------------------------
+//  FASE 4: JUEGO REAL (NIVEL 1)
+//  ---------------------------------------------------------
 function iniciar_nivel_1() {
     let lugar: tiles.Location;
     let nueva_minita: Sprite;
@@ -263,7 +286,11 @@ function iniciar_nivel_1() {
     
 }
 
+//  ---------------------------------------------------------
+//  FASE 5: JUEGO REAL (NIVEL 2)
+//  ---------------------------------------------------------
 function iniciar_nivel_2() {
+    let numero: number;
     
     nivel_actual = 2
     sprites.destroyAllSpritesOfKind(SpriteKind.Fondo)
@@ -272,23 +299,74 @@ function iniciar_nivel_2() {
     scene.setBackgroundImage(null)
     info.showScore(true)
     info.setScore(0)
-    tiempo_inicio = game.runtime()
     tiles.setCurrentTilemap(tilemap`nivel02`)
-    nena = sprites.create(assets.image`maduro`, SpriteKind.Player)
-    tiles.placeOnTile(nena, tiles.getTileLocation(7, 10))
+    //  Creamos el sprite con maduro base
+    if (assets.image`maduro`) {
+        nena = sprites.create(assets.image`maduro`, SpriteKind.Player)
+    } else {
+        nena = sprites.create(img`
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+        `, SpriteKind.Player)
+    }
+    
+    //  Activamos la lancha
+    if (assets.animation`maduro-lancha-right`) {
+        animation.runImageAnimation(nena, assets.animation`maduro-lancha-right`, 200, true)
+    }
+    
+    tiles.placeOnTile(nena, tiles.getTileLocation(11, 10))
     nena.ay = 350
     nena.setStayInScreen(true)
     scene.cameraFollowSprite(nena)
     bot = sprites.create(assets.image`usarmy`, SpriteKind.Enemy)
-    tiles.placeOnTile(bot, tiles.getTileLocation(4, 10))
+    tiles.placeOnTile(bot, tiles.getTileLocation(4, 9))
     bot.ay = 350
     bot.setBounceOnWall(true)
     let mySpriteBarco = sprites.create(assets.image`barco venezuela`, SpriteKind.Meta)
-    tiles.placeOnTile(mySpriteBarco, tiles.getTileLocation(50, 10))
+    tiles.placeOnTile(mySpriteBarco, tiles.getTileLocation(270, 10))
+    //  --- CUENTA ATRÁS ---
+    //  1. Congelamos al jugador
+    controller.moveSprite(nena, 0, 0)
+    //  2. Bucle de 3 segundos
+    let k = 0
+    while (k < 3) {
+        numero = 3 - k
+        if (nena) {
+            nena.sayText("" + numero, 1000, true)
+        }
+        
+        pause(1000)
+        k += 1
+    }
+    if (nena) {
+        nena.sayText("¡YA!", 500, true)
+    }
+    
+    //  3. Empezamos el juego
     juego_empezado = true
     controller.moveSprite(nena, 100, 0)
+    //  4. Reiniciamos el cronómetro AHORA, para que no cuente los 3 segundos de espera
+    tiempo_inicio = game.runtime()
 }
 
+//  ---------------------------------------------------------
+//  EVENTOS Y FÍSICAS
+//  ---------------------------------------------------------
 function game_over_personalizado() {
     
     juego_empezado = false
@@ -296,6 +374,7 @@ function game_over_personalizado() {
     selector_de_mapa()
 }
 
+//  --- GESTIÓN DE VICTORIAS ---
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Meta, function on_nivel_completado(sprite: Sprite, otherSprite: Sprite) {
     
     let tiempo_final = info.score()
@@ -331,13 +410,31 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Trampolin, function on_on_overla
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function on_right_pressed() {
     if (nena) {
-        animation.runImageAnimation(nena, assets.animation`maduro-right0`, 200, true)
+        if (nivel_actual == 1) {
+            animation.runImageAnimation(nena, assets.animation`maduro-right0`, 200, true)
+        } else if (nivel_actual == 2) {
+            //  En Nivel 2 cambiamos la IMAGEN, no la animación
+            if (assets.image`maduro-lancha-right`) {
+                nena.setImage(assets.image`maduro-lancha-right`)
+            }
+            
+        }
+        
     }
     
 })
 controller.left.onEvent(ControllerButtonEvent.Pressed, function on_left_pressed() {
     if (nena) {
-        animation.runImageAnimation(nena, assets.animation`maduro-left`, 200, true)
+        if (nivel_actual == 1) {
+            animation.runImageAnimation(nena, assets.animation`maduro-left`, 200, true)
+        } else if (nivel_actual == 2) {
+            //  En Nivel 2 cambiamos la IMAGEN, no la animación
+            if (assets.image`maduro-lancha-left`) {
+                nena.setImage(assets.image`maduro-lancha-left`)
+            }
+            
+        }
+        
     }
     
 })
@@ -353,6 +450,7 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, on_a_pressed)
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function on_on_overlap2(sprite2: Sprite, otherSprite2: Sprite) {
     game_over_personalizado()
 })
+//  LÓGICA PRINCIPAL (UPDATE)
 let tiles_petroleo = [assets.tile`petroleo0`, assets.tile`petroleo02`, assets.tile`petroleo1`]
 let tile_mina = assets.tile`interrogacion`
 game.onUpdate(function on_on_update() {
@@ -414,10 +512,10 @@ game.onUpdate(function on_on_update() {
             }
             
         } else if (nivel_actual == 2) {
-            if (distancia3 > 80) {
-                velocidad3 = 70
+            if (distancia3 > 120) {
+                velocidad3 = 320
             } else {
-                velocidad3 = 40
+                velocidad3 = 60
             }
             
         }
@@ -454,4 +552,20 @@ game.onUpdate(function on_on_update() {
     }
     
 })
-menu_inicial()
+//  --- CHIVATO DE COORDENADAS ---
+game.onUpdate(function debug_coordenadas_mapa() {
+    let mi_cursor: Sprite;
+    let col: any;
+    let fila: any;
+    let lista_cursores = sprites.allOfKind(SpriteKind.Cursor)
+    if (lista_cursores.length > 0) {
+        mi_cursor = lista_cursores[0]
+        col = Math.trunc(mi_cursor.x / 16)
+        fila = Math.trunc(mi_cursor.y / 16)
+        mi_cursor.sayText("" + col + ", " + ("" + fila))
+    }
+    
+})
+//  --- INICIO DEL JUEGO ---
+// menu_inicial()
+iniciar_nivel_2()

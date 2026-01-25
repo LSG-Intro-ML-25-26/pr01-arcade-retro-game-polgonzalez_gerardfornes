@@ -2601,6 +2601,44 @@ cccccccccbcffceeecccecccccbcebbbbbbbbbbbbbdbbccbecccccccccccccccccccccbddbbbbbbb
 ...............................................................................................................................................................
 ...............................................................................................................................................................
 `;
+            case "image26":
+            case "maduro-lancha-right":return img`
+. . . . . . . . f f f f f . . . 
+. . . . . . f f f f c f f f . . 
+. . . . . f f c f f f c c f f . 
+. . . . f f f c f f c f f f f . 
+f f f . f c c f c f f f f f f f 
+5 5 f . f f f c f c f f d f f f 
+1 8 f . f f f f f f f d d f f f 
+2 2 f . f f d d f b f d d f f f 
+f f f . f f d d d 1 f d d c f . 
+. . f . . . f f d d d c c f . . 
+. . f . . . . f f d d d 1 f . . 
+f f f f f f f f f f f f f f f f 
+f 5 5 5 5 5 8 8 8 8 8 2 2 2 2 f 
+f 5 5 5 5 5 8 8 8 8 8 2 2 2 2 f 
+. f 5 5 5 5 8 8 8 8 8 2 2 2 f . 
+. . f f f f f f f f f f f f . . 
+`;
+            case "image27":
+            case "maduro-lancha-left":return img`
+. . . f f f f f . . . . . . . . 
+. . f f f c f f f f . . . . . . 
+. f f c c f f f c f f . . . . . 
+. f f f f c f f c f f f . . . . 
+f f f f f f f c f c c f . f f f 
+f f f d f f c f c f f f . f 5 5 
+f f f d d f f f f f f f . f 8 1 
+f f f d d f b f d d f f . f 2 2 
+. f c d d f 1 d d d f f . f f f 
+. . f c c d d d f f . . . f . . 
+. . f 1 d d d f f . . . . f . . 
+f f f f f f f f f f f f f f f f 
+f 2 2 2 2 8 8 8 8 8 5 5 5 5 5 f 
+f 2 2 2 2 8 8 8 8 8 5 5 5 5 5 f 
+. f 2 2 2 8 8 8 8 8 5 5 5 5 f . 
+. . f f f f f f f f f f f f . . 
+`;
         }
         return null;
     })
