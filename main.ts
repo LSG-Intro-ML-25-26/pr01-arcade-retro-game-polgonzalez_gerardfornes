@@ -12,6 +12,8 @@ let bot_mirando_derecha = false
 let velocidad3 = 0
 let distancia3 = 0
 let juego_empezado = false
+let tiempo_inicio = 0
+//  Variable para guardar cuándo empezamos
 //  Personajes y objetos
 let nena : Sprite = null
 let bot : Sprite = null
@@ -26,15 +28,12 @@ let icono3 : Sprite = null
 //  ---------------------------------------------------------
 function menu_inicial() {
     let boton_play: Sprite;
-    scene.setBackgroundImage(assets.image`
-        escape-to-usa2
-        `)
-    if (assets.image`
-        bigButtonPressed2
-        `) {
-        boton_play = sprites.create(assets.image`
-                bigButtonPressed2
-                `, SpriteKind.UI)
+    if (assets.image`escape-to-usa2`) {
+        scene.setBackgroundImage(assets.image`escape-to-usa2`)
+    }
+    
+    if (assets.image`bigButtonPressed2`) {
+        boton_play = sprites.create(assets.image`bigButtonPressed2`, SpriteKind.UI)
         boton_play.setPosition(80, 110)
         pause(500)
         while (!controller.A.isPressed()) {
@@ -57,80 +56,50 @@ function menu_inicial() {
 }
 
 //  ---------------------------------------------------------
-//  FASE 2: CINEMÁTICA (NUEVA HISTORIA)
+//  FASE 2: CINEMÁTICA
 //  ---------------------------------------------------------
 function cinematica_lore() {
-    //  IMAGEN 1: MAPA USA
-    if (assets.image`
-        mapausa
-        `) {
-        scene.setBackgroundImage(assets.image`
-            mapausa
-            `)
+    //  IMAGEN 1
+    if (assets.image`mapausa`) {
+        scene.setBackgroundImage(assets.image`mapausa`)
     } else {
         scene.setBackgroundColor(15)
     }
     
-    //  Negro si falta imagen
     game.showLongText("El mundo pensaba que lo había visto todo, hasta que el 'Caudillo de Wall Street' decidió que la diplomacia era demasiado lenta y aburrida.", DialogLayout.Bottom)
-    //  IMAGEN 2: TRUMPWORLD
-    if (assets.image`
-        trumpworld
-        `) {
-        scene.setBackgroundImage(assets.image`
-            trumpworld
-            `)
+    //  IMAGEN 2
+    if (assets.image`trumpworld`) {
+        scene.setBackgroundImage(assets.image`trumpworld`)
     }
     
     game.showLongText("En un movimiento que nadie vio venir —principalmente porque no tiene sentido legal—, el rubio más famoso de Florida ha 'adquirido' un activo internacional de gran tamaño.", DialogLayout.Bottom)
-    //  IMAGEN 3: MADURO PURPLE
-    if (assets.image`
-        maduropurple
-        `) {
-        scene.setBackgroundImage(assets.image`
-            maduropurple
-            `)
+    //  IMAGEN 3
+    if (assets.image`maduropurple`) {
+        scene.setBackgroundImage(assets.image`maduropurple`)
     }
     
     game.showLongText("Sí... Maduro ha sido secuestrado. Narcolás Maduro AKA 'El Exiliado del Caribe', ahora es propiedad privada.", DialogLayout.Bottom)
-    //  IMAGEN 4: MADURO BROS
-    if (assets.image`
-        madurobros
-        `) {
-        scene.setBackgroundImage(assets.image`
-            madurobros
-            `)
+    //  IMAGEN 4
+    if (assets.image`madurobros`) {
+        scene.setBackgroundImage(assets.image`madurobros`)
     }
     
     game.showLongText("La situación es insostenible. El Servicio Secreto está confundido, el SEBIN está en pánico y Twitter... bueno, X... como quieran llamarle, sigue igual de tóxico que siempre.", DialogLayout.Bottom)
-    //  IMAGEN 5: CARA FELIZ (3 DIÁLOGOS)
-    if (assets.image`
-        cara feliz
-        `) {
-        scene.setBackgroundImage(assets.image`
-            cara feliz
-            `)
+    //  IMAGEN 5
+    if (assets.image`cara feliz`) {
+        scene.setBackgroundImage(assets.image`cara feliz`)
     }
     
-    //  Texto 1
     game.showLongText("Tu trabajo no es juzgar la legalidad de esta locura, ni velar por los intereses de ningún país en concreto.", DialogLayout.Bottom)
-    //  Texto 2
     game.showLongText("Tu misión es intervenir antes de que 'Tu Patito Favorito' A.K.A YFD (Your Favorite Duck) aplique su política de America First convirtiendo a Maduro en el primer souvenir humano de su nueva franquicia.", DialogLayout.Bottom)
-    //  Texto 3
     game.showLongText("Prepárate para la extracción más políticamente incorrecta de la historia. Inserte moneda para evitar la Tercera Guerra Mundial.", DialogLayout.Bottom)
-    //  IMAGEN 6: POKEMON (FINAL)
-    if (assets.image`
-        pokemon
-        `) {
-        scene.setBackgroundImage(assets.image`
-            pokemon
-            `)
+    //  IMAGEN 6
+    if (assets.image`pokemon`) {
+        scene.setBackgroundImage(assets.image`pokemon`)
         pause(2000)
-        //  Pausa dramática de 2 segundos
         game.showLongText("¡EMPIEZA LA MISIÓN!", DialogLayout.Center)
     }
     
-    //  Pasamos al mapa
     selector_de_mapa()
 }
 
@@ -143,7 +112,9 @@ function selector_de_mapa() {
     juego_empezado = false
     nena = null
     bot = null
-    //  Limpieza
+    //  Ocultamos la puntuación (que usamos como cronómetro) al volver al mapa
+    info.setScore(0)
+    info.showScore(false)
     scene.setBackgroundImage(null)
     scene.setBackgroundColor(9)
     sprites.destroyAllSpritesOfKind(SpriteKind.Player)
@@ -152,58 +123,46 @@ function selector_de_mapa() {
     sprites.destroyAllSpritesOfKind(SpriteKind.Trampolin)
     sprites.destroyAllSpritesOfKind(SpriteKind.UI)
     pause(500)
-    //  1. TILEMAP INVISIBLE GIGANTE
-    if (assets.tile`
-        mundo_grande
-        `) {
-        tiles.setCurrentTilemap(tilemap`
-            mundo_grande
-            `)
+    //  1. TILEMAP
+    if (assets.tile`mundo_grande`) {
+        tiles.setCurrentTilemap(tilemap`mundo_grande`)
     } else {
-        tiles.setCurrentTilemap(tilemap`
-            level1
-            `)
+        tiles.setCurrentTilemap(tilemap`level1`)
     }
     
     //  2. FONDO GIGANTE
-    if (assets.image`
-        mapamundi
-        `) {
-        mapa_visual = sprites.create(assets.image`
-            mapamundi
-            `, SpriteKind.Fondo)
+    if (assets.image`mapamundi2`) {
+        mapa_visual = sprites.create(assets.image`mapamundi2`, SpriteKind.Fondo)
         mapa_visual.z = -100
         mapa_visual.setFlag(SpriteFlag.Ghost, true)
         mapa_visual.setPosition(400, 400)
     }
     
     //  3. CURSOR
-    let cursor = sprites.create(assets.image`
-        maduro
-        `, SpriteKind.Cursor)
+    let cursor = sprites.create(assets.image`maduro`, SpriteKind.Cursor)
     tiles.placeOnTile(cursor, tiles.getTileLocation(10, 26))
     controller.moveSprite(cursor, 150, 150)
     scene.cameraFollowSprite(cursor)
     cursor.setStayInScreen(true)
     //  --- PUNTOS DE NIVEL ---
-    //  NIVEL 1
-    icono1 = sprites.create(assets.image`
-            venezuela0
-            `, SpriteKind.IconoNivel)
-    tiles.placeOnTile(icono1, tiles.getTileLocation(12, 26))
-    icono1.sayText("1", 50000, false)
-    //  NIVEL 2
-    icono2 = sprites.create(assets.image`
-            barco venezuela
-            `, SpriteKind.IconoNivel)
-    tiles.placeOnTile(icono2, tiles.getTileLocation(16, 18))
-    icono2.sayText("2", 50000, false)
-    //  NIVEL 3
-    icono3 = sprites.create(assets.image`
-            comunista
-            `, SpriteKind.IconoNivel)
-    tiles.placeOnTile(icono3, tiles.getTileLocation(37, 9))
-    icono3.sayText("3", 50000, false)
+    if (assets.image`venezuela0`) {
+        icono1 = sprites.create(assets.image`venezuela0`, SpriteKind.IconoNivel)
+        tiles.placeOnTile(icono1, tiles.getTileLocation(12, 26))
+        icono1.sayText("1", 50000, false)
+    }
+    
+    if (assets.image`barco venezuela`) {
+        icono2 = sprites.create(assets.image`barco venezuela`, SpriteKind.IconoNivel)
+        tiles.placeOnTile(icono2, tiles.getTileLocation(16, 18))
+        icono2.sayText("2", 50000, false)
+    }
+    
+    if (assets.image`comunista`) {
+        icono3 = sprites.create(assets.image`comunista`, SpriteKind.IconoNivel)
+        tiles.placeOnTile(icono3, tiles.getTileLocation(37, 9))
+        icono3.sayText("3", 50000, false)
+    }
+    
     game.splash("Elige un nivel")
 }
 
@@ -240,54 +199,36 @@ function iniciar_nivel_1() {
     sprites.destroyAllSpritesOfKind(SpriteKind.Cursor)
     sprites.destroyAllSpritesOfKind(SpriteKind.IconoNivel)
     scene.setBackgroundImage(null)
-    tiles.setCurrentTilemap(tilemap`
-        prova
-        `)
-    tanque = sprites.create(assets.image`
-        tanque
-        `, SpriteKind.Obstacle)
+    //  --- CRONÓMETRO (Setup) ---
+    //  Mostramos la puntuación, pero la usaremos para mostrar SEGUNDOS
+    info.showScore(true)
+    info.setScore(0)
+    //  Guardamos el tiempo actual (en milisegundos)
+    tiempo_inicio = game.runtime()
+    tiles.setCurrentTilemap(tilemap`prova`)
+    tanque = sprites.create(assets.image`tanque`, SpriteKind.Obstacle)
     tiles.placeOnTile(tanque, tiles.getTileLocation(116, 10))
-    tanque02 = sprites.create(assets.image`
-        tanque
-        `, SpriteKind.Obstacle)
+    tanque02 = sprites.create(assets.image`tanque`, SpriteKind.Obstacle)
     tiles.placeOnTile(tanque02, tiles.getTileLocation(146, 10))
-    let mySpriteBarco = sprites.create(assets.image`
-            barco venezuela
-            `, SpriteKind.Player)
+    let mySpriteBarco = sprites.create(assets.image`barco venezuela`, SpriteKind.Player)
     tiles.placeOnTile(mySpriteBarco, tiles.getTileLocation(245, 10))
-    bot = sprites.create(assets.image`
-        soldado0
-        `, SpriteKind.Enemy)
+    bot = sprites.create(assets.image`soldado0`, SpriteKind.Enemy)
     tiles.placeOnTile(bot, tiles.getTileLocation(1, 7))
     bot.ay = 350
-    nena = sprites.create(assets.image`
-        maduro
-        `, SpriteKind.Player)
+    nena = sprites.create(assets.image`maduro`, SpriteKind.Player)
     tiles.placeOnTile(nena, tiles.getTileLocation(6, 9))
     nena.ay = 350
     nena.setStayInScreen(true)
     scene.cameraFollowSprite(nena)
-    let lista_minas = tiles.getTilesByType(assets.tile`
-        interrogacion
-        `)
+    let lista_minas = tiles.getTilesByType(assets.tile`interrogacion`)
     let i = 0
     while (i < lista_minas.length) {
         lugar = lista_minas[i]
-        nueva_minita = sprites.create(assets.image`
-            minita3
-            `, SpriteKind.Enemy)
+        nueva_minita = sprites.create(assets.image`minita3`, SpriteKind.Enemy)
         tiles.placeOnTile(nueva_minita, lugar)
         i += 1
     }
-    let partes_toldo = [assets.tile`
-            toldo01
-            `, assets.tile`
-            toldo02
-            `, assets.tile`
-            toldo03
-            `, assets.tile`
-            toldo04
-            `]
+    let partes_toldo = [assets.tile`toldo01`, assets.tile`toldo02`, assets.tile`toldo03`, assets.tile`toldo04`]
     let t = 0
     while (t < partes_toldo.length) {
         tipo_actual = partes_toldo[t]
@@ -297,9 +238,7 @@ function iniciar_nivel_1() {
             lugar_t = lista_lugares_toldo[k]
             nuevo_toldo = sprites.create(tipo_actual, SpriteKind.Trampolin)
             tiles.placeOnTile(nuevo_toldo, lugar_t)
-            tiles.setTileAt(lugar_t, assets.tile`
-                transparency16
-                `)
+            tiles.setTileAt(lugar_t, assets.tile`transparency16`)
             k += 1
         }
         t += 1
@@ -309,7 +248,7 @@ function iniciar_nivel_1() {
     while (k < 3) {
         numero = 3 - k
         if (nena) {
-            nena.sayText("" + ("" + ("" + numero)), 1000, true)
+            nena.sayText("" + numero, 1000, true)
         }
         
         pause(1000)
@@ -322,13 +261,9 @@ function iniciar_nivel_1() {
     juego_empezado = true
     controller.moveSprite(nena, 100, 0)
     if (controller.right.isPressed()) {
-        animation.runImageAnimation(nena, assets.animation`
-                maduro-right0
-                `, 200, true)
+        animation.runImageAnimation(nena, assets.animation`maduro-right0`, 200, true)
     } else if (controller.left.isPressed()) {
-        animation.runImageAnimation(nena, assets.animation`
-                maduro-left
-                `, 200, true)
+        animation.runImageAnimation(nena, assets.animation`maduro-left`, 200, true)
     }
     
 }
@@ -343,7 +278,7 @@ function game_over_personalizado() {
     selector_de_mapa()
 }
 
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Trampolin, function on_on_overlap(sprite2: Sprite, otherSprite2: Sprite) {
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Trampolin, function on_on_overlap(sprite: Sprite, otherSprite: Sprite) {
     if (nena) {
         nena.vy = -250
         if (nena.vx > 0) {
@@ -357,17 +292,13 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Trampolin, function on_on_overla
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function on_right_pressed() {
     if (nena) {
-        animation.runImageAnimation(nena, assets.animation`
-                maduro-right0
-                `, 200, true)
+        animation.runImageAnimation(nena, assets.animation`maduro-right0`, 200, true)
     }
     
 })
 controller.left.onEvent(ControllerButtonEvent.Pressed, function on_left_pressed() {
     if (nena) {
-        animation.runImageAnimation(nena, assets.animation`
-                maduro-left
-                `, 200, true)
+        animation.runImageAnimation(nena, assets.animation`maduro-left`, 200, true)
     }
     
 })
@@ -380,27 +311,30 @@ function on_a_pressed() {
 
 controller.A.onEvent(ControllerButtonEvent.Pressed, on_a_pressed)
 controller.up.onEvent(ControllerButtonEvent.Pressed, on_a_pressed)
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function on_on_overlap2(sprite22: Sprite, otherSprite22: Sprite) {
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function on_on_overlap2(sprite2: Sprite, otherSprite2: Sprite) {
     game_over_personalizado()
 })
 //  LÓGICA PRINCIPAL (UPDATE)
-let tiles_petroleo = [assets.tile`
-        petroleo0
-        `, assets.tile`
-        petroleo02
-        `, assets.tile`
-        petroleo1
-        `]
-let tile_mina = assets.tile`
-    interrogacion
-    `
+let tiles_petroleo = [assets.tile`petroleo0`, assets.tile`petroleo02`, assets.tile`petroleo1`]
+let tile_mina = assets.tile`interrogacion`
 game.onUpdate(function on_on_update() {
+    let tiempo_actual: number;
+    let segundos: number;
     let loc_actual: tiles.Location;
     let columna: number;
     let fila_abajo: number;
     let ubicacion_suelo: tiles.Location;
     let imagen_suelo: Image;
     let estoy_en_petroleo: boolean;
+    
+    //  --- LÓGICA DEL CRONÓMETRO ---
+    //  Si estamos jugando, actualizamos el "Score" con los segundos pasados
+    if (juego_empezado) {
+        tiempo_actual = game.runtime()
+        //  Calculamos segundos: (Tiempo actual - Tiempo inicio) / 1000
+        segundos = Math.trunc((tiempo_actual - tiempo_inicio) / 1000)
+        info.setScore(segundos)
+    }
     
     if (!nena || !bot) {
         return
@@ -447,18 +381,14 @@ game.onUpdate(function on_on_update() {
         if (nena.x < bot.x) {
             bot.vx = 0 - velocidad3
             if (bot_mirando_derecha == true) {
-                animation.runImageAnimation(bot, assets.animation`
-                        soldado-left0
-                        `, 500, true)
+                animation.runImageAnimation(bot, assets.animation`soldado-left0`, 500, true)
                 bot_mirando_derecha = false
             }
             
         } else {
             bot.vx = velocidad3
             if (bot_mirando_derecha == false) {
-                animation.runImageAnimation(bot, assets.animation`
-                        soldado-right0
-                        `, 200, true)
+                animation.runImageAnimation(bot, assets.animation`soldado-right0`, 200, true)
                 bot_mirando_derecha = true
             }
             
@@ -484,29 +414,9 @@ game.onUpdate(function debug_coordenadas_mapa() {
         mi_cursor = lista_cursores[0]
         col = Math.trunc(mi_cursor.x / 16)
         fila = Math.trunc(mi_cursor.y / 16)
-        mi_cursor.sayText("" + ("" + ("" + col)) + ", " + ("" + ("" + ("" + fila))))
+        mi_cursor.sayText("" + col + ", " + ("" + fila))
     }
     
 })
+//  --- INICIO DEL JUEGO ---
 menu_inicial()
-let mySprite20260125T134651507Z = sprites.create(assets.image`
-    mapausa
-    `, SpriteKind.Player)
-let mySprite20260125T134728160Z = sprites.create(assets.image`
-    cara feliz
-    `, SpriteKind.Player)
-let mySprite20260125T134758921Z = sprites.create(assets.image`
-    madurobros
-    `, SpriteKind.Player)
-let mySprite20260125T134842073Z = sprites.create(assets.image`
-        maduropurple
-        `, SpriteKind.Player)
-let mySprite20260125T134908703Z = sprites.create(assets.image`
-    pokemon
-    `, SpriteKind.Player)
-let mySprite20260125T134927886Z = sprites.create(assets.image`
-    trumpworld
-    `, SpriteKind.Player)
-let mySprite20260125T135119119Z = sprites.create(assets.image`
-    mapa grande
-    `, SpriteKind.Player)
