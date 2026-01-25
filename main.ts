@@ -45,8 +45,8 @@ let tiempo_final = 0
 //  ---------------------------------------------------------
 function menu_inicial() {
     let boton_play: Sprite;
-    if (assets.image`escape-to-usa2`) {
-        scene.setBackgroundImage(assets.image`escape-to-usa2`)
+    if (assets.image`escapefromusa`) {
+        scene.setBackgroundImage(assets.image`escapefromusa`)
     }
     
     if (assets.image`bigButtonPressed2`) {
@@ -76,13 +76,78 @@ function menu_inicial() {
 //  FASE 2: CINEMÁTICA
 //  ---------------------------------------------------------
 function cinematica_lore() {
-    if (assets.image`mapausa`) {
-        scene.setBackgroundImage(assets.image`mapausa`)
+    //  IMAGEN 1: MAPA USA
+    if (assets.image`
+            mapausa
+            `) {
+        scene.setBackgroundImage(assets.image`
+                mapausa
+                `)
     } else {
         scene.setBackgroundColor(15)
     }
     
-    game.showLongText("El mundo pensaba que lo había visto todo...", DialogLayout.Bottom)
+    //  Negro si falta imagen
+    game.showLongText("El mundo pensaba que lo había visto todo, hasta que el 'Caudillo de Wall Street' decidió que la diplomacia era demasiado lenta y aburrida.", DialogLayout.Bottom)
+    //  IMAGEN 2: TRUMPWORLD
+    if (assets.image`
+            trumpworld
+            `) {
+        scene.setBackgroundImage(assets.image`
+                trumpworld
+                `)
+    }
+    
+    game.showLongText(`En un movimiento que nadie vio venir 
+ —principalmente porque no tiene sentido legal—, el rubio más famoso de Florida ha 'adquirido' un activo internacional de gran tamaño.`, DialogLayout.Bottom)
+    //  IMAGEN 3: MADURO PURPLE
+    if (assets.image`
+            maduropurple
+            `) {
+        scene.setBackgroundImage(assets.image`
+                maduropurple
+                `)
+    }
+    
+    game.showLongText("Sí... Maduro ha sido secuestrado. Narcolás Maduro AKA 'El Exiliado del Caribe', ahora es propiedad privada.", DialogLayout.Bottom)
+    //  IMAGEN 4: MADURO BROS
+    if (assets.image`
+            madurobros
+            `) {
+        scene.setBackgroundImage(assets.image`
+                madurobros
+                `)
+    }
+    
+    game.showLongText("La situación es insostenible. El Servicio Secreto está confundido, el SEBIN está en pánico y Twitter... bueno, X... como quieran llamarle, sigue igual de tóxico que siempre.", DialogLayout.Bottom)
+    //  IMAGEN 5: CARA FELIZ (3 DIÁLOGOS)
+    if (assets.image`
+            cara feliz
+            `) {
+        scene.setBackgroundImage(assets.image`
+                cara feliz
+                `)
+    }
+    
+    //  Texto 1
+    game.showLongText("Tu trabajo no es juzgar la legalidad de esta locura, ni velar por los intereses de ningún país en concreto.", DialogLayout.Bottom)
+    //  Texto 2
+    game.showLongText("Tu misión es intervenir antes de que 'Tu Patito Favorito' A.K.A YFD (Your Favorite Duck) aplique su política de America First convirtiendo a Maduro en el primer souvenir humano de su nueva franquicia.", DialogLayout.Bottom)
+    //  Texto 3
+    game.showLongText("Prepárate para la extracción más políticamente incorrecta de la historia. Inserte moneda para evitar la Tercera Guerra Mundial.", DialogLayout.Bottom)
+    //  IMAGEN 6: POKEMON (FINAL)
+    if (assets.image`
+            pokemon
+            `) {
+        scene.setBackgroundImage(assets.image`
+                pokemon
+                `)
+        pause(2000)
+        //  Pausa dramática de 2 segundos
+        game.showLongText("¡EMPIEZA LA MISIÓN!", DialogLayout.Center)
+    }
+    
+    //  Pasamos al mapa
     selector_de_mapa()
 }
 
@@ -210,7 +275,7 @@ function iniciar_nivel_1() {
     let numero: number;
     
     nivel_actual = 1
-    probabilidad_bomba = 100
+    probabilidad_bomba = 0
     sprites.destroyAllSpritesOfKind(SpriteKind.Fondo)
     sprites.destroyAllSpritesOfKind(SpriteKind.Cursor)
     sprites.destroyAllSpritesOfKind(SpriteKind.IconoNivel)
@@ -311,17 +376,17 @@ function iniciar_nivel_2() {
     }
     
     let ola1 = sprites.create(img_ola, SpriteKind.Fondo)
-    tiles.placeOnTile(ola1, tiles.getTileLocation(15, 12))
+    tiles.placeOnTile(ola1, tiles.getTileLocation(50, 12))
     ola1.z = 1
     ola1.ay = 0
     ola1.setFlag(SpriteFlag.Ghost, true)
     let ola2 = sprites.create(img_ola, SpriteKind.Fondo)
-    tiles.placeOnTile(ola2, tiles.getTileLocation(30, 13))
+    tiles.placeOnTile(ola2, tiles.getTileLocation(130, 13))
     ola2.z = 1
     ola2.ay = 0
     ola2.setFlag(SpriteFlag.Ghost, true)
     let ola3 = sprites.create(img_ola, SpriteKind.Fondo)
-    tiles.placeOnTile(ola3, tiles.getTileLocation(45, 12))
+    tiles.placeOnTile(ola3, tiles.getTileLocation(200, 12))
     ola3.z = 1
     ola3.ay = 0
     ola3.setFlag(SpriteFlag.Ghost, true)
@@ -422,7 +487,7 @@ function iniciar_nivel_3() {
     //  El enemigo también vuela
     bot.setBounceOnWall(true)
     //  --- META AL FINAL DEL NIVEL ---
-    let meta_avion = sprites.create(assets.image`barco venezuela`, SpriteKind.Meta)
+    let meta_avion = sprites.create(assets.image`helicopteroruso`, SpriteKind.Meta)
     tiles.placeOnTile(meta_avion, tiles.getTileLocation(200, 10))
     //  --- INICIO ---
     juego_empezado = true
@@ -548,7 +613,7 @@ game.onUpdateInterval(1000, function generar_bomba() {
     let img_bomba: Image;
     let bomba: Sprite;
     //  Solo caen si el juego ha empezado y NO estamos en el Nivel 3
-    if (juego_empezado && nivel_actual != 3 && randint(0, 100) < probabilidad_bomba) {
+    if (juego_empezado && nivel_actual == 2 && randint(0, 100) < probabilidad_bomba) {
         cam_x = scene.cameraProperty(CameraProperty.X)
         cam_top = scene.cameraProperty(CameraProperty.Top)
         img_bomba = null
@@ -799,4 +864,4 @@ game.onUpdate(function debug_coordenadas_mapa() {
     
 })
 //  --- INICIO DEL JUEGO ---
-iniciar_nivel_3()
+menu_inicial()

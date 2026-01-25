@@ -50,8 +50,8 @@ tiempo_final = 0
 # FASE 1: MENÚ INICIAL
 # ---------------------------------------------------------
 def menu_inicial():
-    if assets.image("escape-to-usa2"):
-        scene.set_background_image(assets.image("escape-to-usa2"))
+    if assets.image("escapefromusa"):
+        scene.set_background_image(assets.image("escapefromusa"))
     
     if assets.image("bigButtonPressed2"):
         boton_play = sprites.create(assets.image("bigButtonPressed2"), SpriteKind.UI)
@@ -74,12 +74,73 @@ def menu_inicial():
 # FASE 2: CINEMÁTICA
 # ---------------------------------------------------------
 def cinematica_lore():
-    if assets.image("mapausa"):
-        scene.set_background_image(assets.image("mapausa"))
-    else:
-        scene.set_background_color(15)
-    game.show_long_text("El mundo pensaba que lo había visto todo...", DialogLayout.BOTTOM)
-    selector_de_mapa()
+    # IMAGEN 1: MAPA USA
+        if assets.image("""
+            mapausa
+            """):
+            scene.set_background_image(assets.image("""
+                mapausa
+                """))
+        else:
+            scene.set_background_color(15)
+        # Negro si falta imagen
+        game.show_long_text("El mundo pensaba que lo había visto todo, hasta que el 'Caudillo de Wall Street' decidió que la diplomacia era demasiado lenta y aburrida.",
+            DialogLayout.BOTTOM)
+        # IMAGEN 2: TRUMPWORLD
+        if assets.image("""
+            trumpworld
+            """):
+            scene.set_background_image(assets.image("""
+                trumpworld
+                """))
+        game.show_long_text("En un movimiento que nadie vio venir \n —principalmente porque no tiene sentido legal—, el rubio más famoso de Florida ha 'adquirido' un activo internacional de gran tamaño.",
+            DialogLayout.BOTTOM)
+        # IMAGEN 3: MADURO PURPLE
+        if assets.image("""
+            maduropurple
+            """):
+            scene.set_background_image(assets.image("""
+                maduropurple
+                """))
+        game.show_long_text("Sí... Maduro ha sido secuestrado. Narcolás Maduro AKA 'El Exiliado del Caribe', ahora es propiedad privada.",
+            DialogLayout.BOTTOM)
+        # IMAGEN 4: MADURO BROS
+        if assets.image("""
+            madurobros
+            """):
+            scene.set_background_image(assets.image("""
+                madurobros
+                """))
+        game.show_long_text("La situación es insostenible. El Servicio Secreto está confundido, el SEBIN está en pánico y Twitter... bueno, X... como quieran llamarle, sigue igual de tóxico que siempre.",
+            DialogLayout.BOTTOM)
+        # IMAGEN 5: CARA FELIZ (3 DIÁLOGOS)
+        if assets.image("""
+            cara feliz
+            """):
+            scene.set_background_image(assets.image("""
+                cara feliz
+                """))
+        # Texto 1
+        game.show_long_text("Tu trabajo no es juzgar la legalidad de esta locura, ni velar por los intereses de ningún país en concreto.",
+            DialogLayout.BOTTOM)
+        # Texto 2
+        game.show_long_text("Tu misión es intervenir antes de que 'Tu Patito Favorito' A.K.A YFD (Your Favorite Duck) aplique su política de America First convirtiendo a Maduro en el primer souvenir humano de su nueva franquicia.",
+            DialogLayout.BOTTOM)
+        # Texto 3
+        game.show_long_text("Prepárate para la extracción más políticamente incorrecta de la historia. Inserte moneda para evitar la Tercera Guerra Mundial.",
+            DialogLayout.BOTTOM)
+        # IMAGEN 6: POKEMON (FINAL)
+        if assets.image("""
+            pokemon
+            """):
+            scene.set_background_image(assets.image("""
+                pokemon
+                """))
+            pause(2000)
+            # Pausa dramática de 2 segundos
+            game.show_long_text("¡EMPIEZA LA MISIÓN!", DialogLayout.CENTER)
+        # Pasamos al mapa
+        selector_de_mapa()
 
 # ---------------------------------------------------------
 # FASE 3: SELECTOR DE MAPA
@@ -189,7 +250,7 @@ def iniciar_nivel_1():
     global tanque, tanque02, bot, nena, juego_empezado, tiempo_inicio, nivel_actual, mySpriteBarco, i, t, probabilidad_bomba
     
     nivel_actual = 1
-    probabilidad_bomba = 100
+    probabilidad_bomba = 0
     
     sprites.destroy_all_sprites_of_kind(SpriteKind.Fondo)
     sprites.destroy_all_sprites_of_kind(SpriteKind.Cursor)
@@ -298,19 +359,19 @@ def iniciar_nivel_2():
         """)
 
     ola1 = sprites.create(img_ola, SpriteKind.Fondo)
-    tiles.place_on_tile(ola1, tiles.get_tile_location(15, 12))
+    tiles.place_on_tile(ola1, tiles.get_tile_location(50, 12))
     ola1.z = 1
     ola1.ay = 0
     ola1.set_flag(SpriteFlag.GHOST, True)
 
     ola2 = sprites.create(img_ola, SpriteKind.Fondo)
-    tiles.place_on_tile(ola2, tiles.get_tile_location(30, 13))
+    tiles.place_on_tile(ola2, tiles.get_tile_location(130, 13))
     ola2.z = 1
     ola2.ay = 0
     ola2.set_flag(SpriteFlag.GHOST, True)
 
     ola3 = sprites.create(img_ola, SpriteKind.Fondo)
-    tiles.place_on_tile(ola3, tiles.get_tile_location(45, 12))
+    tiles.place_on_tile(ola3, tiles.get_tile_location(200, 12))
     ola3.z = 1
     ola3.ay = 0
     ola3.set_flag(SpriteFlag.GHOST, True)
@@ -415,7 +476,7 @@ def iniciar_nivel_3():
     bot.set_bounce_on_wall(True)
 
     # --- META AL FINAL DEL NIVEL ---
-    meta_avion = sprites.create(assets.image("barco venezuela"), SpriteKind.Meta)
+    meta_avion = sprites.create(assets.image("helicopteroruso"), SpriteKind.Meta)
     tiles.place_on_tile(meta_avion, tiles.get_tile_location(200, 10))
     
     # --- INICIO ---
@@ -519,7 +580,7 @@ sprites.on_overlap(SpriteKind.player, SpriteKind.enemy, on_on_overlap2)
 
 def generar_bomba():
     # Solo caen si el juego ha empezado y NO estamos en el Nivel 3
-    if juego_empezado and nivel_actual != 3 and randint(0, 100) < probabilidad_bomba:
+    if juego_empezado and nivel_actual == 2 and randint(0, 100) < probabilidad_bomba:
         cam_x = scene.camera_property(CameraProperty.X)
         cam_top = scene.camera_property(CameraProperty.Top)
         
@@ -728,5 +789,4 @@ def debug_coordenadas_mapa():
 game.on_update(debug_coordenadas_mapa)
 
 # --- INICIO DEL JUEGO ---
-iniciar_nivel_3() # Descomentar para probar directo Nivel 3
-#selector_de_mapa()
+menu_inicial()
