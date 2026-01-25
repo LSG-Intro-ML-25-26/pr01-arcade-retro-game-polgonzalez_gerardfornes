@@ -543,33 +543,50 @@ def generar_bomba():
 game.on_update_interval(1000, generar_bomba)
 
 # ==========================================
-#   SISTEMA DE DISPARO DEL HELICÓPTERO (CORREGIDO)
+#   SISTEMA DE DISPARO DEL HELICÓPTERO (CORREGIDO FINAL)
 # ==========================================
 
 def disparar_helicoptero():
+    # Dispara solo en nivel 3 y si el bot existe
     if juego_empezado and nivel_actual == 3 and bot:
-        # Imagen de proyectil simple roja
-        misil = sprites.create(img("""
-            2 2
-            2 2
-        """), SpriteKind.Projectile)
         
-        misil.set_position(bot.x, bot.y)
+        # Crear imagen de "bala" o "gota"
+        img_bala = None
+        if assets.image("misil"):
+            img_bala = assets.image("misil")
+        else:
+            img_bala = img("""
+                2 2
+                2 2
+            """)
+            
+        misil = sprites.create(img_bala, SpriteKind.Projectile)
         
-        # Calcular dirección hacia el jugador usando MATH (Mayúscula)
-        dx = nena.x - bot.x
-        dy = nena.y - bot.y
+        # --- AJUSTE DE POSICIÓN ---
+        # Salida por el "morro" lateral
+        offset_x = 0
+        if nena.x < bot.x:
+            offset_x = -70 # Izquierda
+        else:
+            offset_x = 70  # Derecha
+            
+        misil.set_position(bot.x + offset_x, bot.y + 5)
         
-        velocidad_misil = 150
+        # --- CÁLCULO DE DIRECCIÓN RECTA (LÁSER) ---
+        dx = nena.x - misil.x
+        dy = nena.y - misil.y
+        
         angulo = Math.atan2(dy, dx)
-        misil.vx = Math.cos(angulo) * velocidad_misil
-        misil.vy = Math.sin(angulo) * velocidad_misil
+        velocidad_disparo = 200
         
-        misil.z = 100
-        misil.set_flag(SpriteFlag.AUTO_DESTROY, True)
+        misil.vx = Math.cos(angulo) * velocidad_disparo
+        misil.vy = Math.sin(angulo) * velocidad_disparo
+        
+        misil.z = 95
+        misil.lifespan = 3000
 
-# Dispara cada 1.5 segundos
-game.on_update_interval(1500, disparar_helicoptero)
+# Dispara cada 500ms (1.5s)
+game.on_update_interval(2500, disparar_helicoptero)
 
 
 def on_player_hit_bomb(player, bomb):
@@ -585,6 +602,14 @@ def on_bomb_hit_wall(bomb2, location):
         probabilidad_bomba -= 10
 
 scene.on_hit_wall(SpriteKind.Projectile, on_bomb_hit_wall)
+
+# --- CHOQUE CON NUBE EN NIVEL 3 ---
+def on_nube_tocada(sprite, location):
+    if nivel_actual == 3:
+        game_over_personalizado()
+
+if assets.tile("nube02"):
+    scene.on_overlap_tile(SpriteKind.player, assets.tile("nube02"), on_nube_tocada)
 
 # LÓGICA PRINCIPAL (UPDATE)
 tiles_petroleo = [
@@ -665,13 +690,12 @@ def on_on_update():
     elif juego_empezado and nivel_actual == 3:
         if bot:
             # === VELOCIDAD DINÁMICA AÉREA ===
-            
-            distancia3 = abs(nena.x - bot.x) # Distancia X
+            distancia3 = abs(nena.x - bot.x)
             
             if distancia3 > 120:
                 velocidad3 = 200
             elif distancia3 > 30:
-                velocidad3 = 60 # Un poco más rápido que antes
+                velocidad3 = 60
             else:
                 velocidad3 = 40
             

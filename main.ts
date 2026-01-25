@@ -572,31 +572,52 @@ game.onUpdateInterval(1000, function generar_bomba() {
     
 })
 //  ==========================================
-//    SISTEMA DE DISPARO DEL HELICÓPTERO (CORREGIDO)
+//    SISTEMA DE DISPARO DEL HELICÓPTERO (CORREGIDO FINAL)
 //  ==========================================
-//  Dispara cada 1.5 segundos
-game.onUpdateInterval(1500, function disparar_helicoptero() {
+//  Dispara cada 500ms (1.5s)
+game.onUpdateInterval(2500, function disparar_helicoptero() {
+    let img_bala: Image;
     let misil: Sprite;
+    let offset_x: number;
     let dx: number;
     let dy: number;
-    let velocidad_misil: number;
     let angulo: number;
+    let velocidad_disparo: number;
+    //  Dispara solo en nivel 3 y si el bot existe
     if (juego_empezado && nivel_actual == 3 && bot) {
-        //  Imagen de proyectil simple roja
-        misil = sprites.create(img`
-            2 2
-            2 2
-        `, SpriteKind.Projectile)
-        misil.setPosition(bot.x, bot.y)
-        //  Calcular dirección hacia el jugador usando MATH (Mayúscula)
-        dx = nena.x - bot.x
-        dy = nena.y - bot.y
-        velocidad_misil = 150
+        //  Crear imagen de "bala" o "gota"
+        img_bala = null
+        if (assets.image`misil`) {
+            img_bala = assets.image`misil`
+        } else {
+            img_bala = img`
+                2 2
+                2 2
+            `
+        }
+        
+        misil = sprites.create(img_bala, SpriteKind.Projectile)
+        //  --- AJUSTE DE POSICIÓN ---
+        //  Salida por el "morro" lateral
+        offset_x = 0
+        if (nena.x < bot.x) {
+            offset_x = -70
+        } else {
+            //  Izquierda
+            offset_x = 70
+        }
+        
+        //  Derecha
+        misil.setPosition(bot.x + offset_x, bot.y + 5)
+        //  --- CÁLCULO DE DIRECCIÓN RECTA (LÁSER) ---
+        dx = nena.x - misil.x
+        dy = nena.y - misil.y
         angulo = Math.atan2(dy, dx)
-        misil.vx = Math.cos(angulo) * velocidad_misil
-        misil.vy = Math.sin(angulo) * velocidad_misil
-        misil.z = 100
-        misil.setFlag(SpriteFlag.AutoDestroy, true)
+        velocidad_disparo = 200
+        misil.vx = Math.cos(angulo) * velocidad_disparo
+        misil.vy = Math.sin(angulo) * velocidad_disparo
+        misil.z = 95
+        misil.lifespan = 3000
     }
     
 })
@@ -612,6 +633,16 @@ scene.onHitWall(SpriteKind.Projectile, function on_bomb_hit_wall(bomb2: Sprite, 
     }
     
 })
+//  --- CHOQUE CON NUBE EN NIVEL 3 ---
+if (assets.tile`nube02`) {
+    scene.onOverlapTile(SpriteKind.Player, assets.tile`nube02`, function on_nube_tocada(sprite: Sprite, location: tiles.Location) {
+        if (nivel_actual == 3) {
+            game_over_personalizado()
+        }
+        
+    })
+}
+
 //  LÓGICA PRINCIPAL (UPDATE)
 let tiles_petroleo = [assets.tile`petroleo0`, assets.tile`petroleo02`, assets.tile`petroleo1`]
 let tile_mina = assets.tile`interrogacion`
@@ -721,13 +752,11 @@ game.onUpdate(function on_on_update() {
         if (bot) {
             //  === VELOCIDAD DINÁMICA AÉREA ===
             distancia3 = Math.abs(nena.x - bot.x)
-            //  Distancia X
             if (distancia3 > 120) {
                 velocidad3 = 200
             } else if (distancia3 > 30) {
                 velocidad3 = 60
             } else {
-                //  Un poco más rápido que antes
                 velocidad3 = 40
             }
             
