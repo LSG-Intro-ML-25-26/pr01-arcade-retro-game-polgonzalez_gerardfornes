@@ -8,31 +8,24 @@ namespace SpriteKind {
     export const Meta = SpriteKind.create()
 }
 
-//  Projectile existe por defecto
-//  --- 1. VARIABLES GLOBALES ---
 let bot_mirando_derecha = false
 let velocidad3 = 0
 let distancia3 = 0
 let juego_empezado = false
 let tiempo_inicio = 0
 let probabilidad_bomba = 100
-//  PROGRESO
 let nivel_desbloqueado = 1
 let nivel_actual = 0
-//  Personajes y objetos
 let nena : Sprite = null
 let bot : Sprite = null
 let tanque : Sprite = null
 let tanque02 : Sprite = null
 let mySpriteBarco : Sprite = null
 let mySpriteBarco2 : Sprite = null
-//  Variable cursor
 let cursor : Sprite = null
-//  Variables para los iconos
 let icono1 : Sprite = null
 let icono2 : Sprite = null
 let icono3 : Sprite = null
-//  Listas y contadores
 let lista_cursores : Sprite[] = []
 let l = 0
 let t = 0
@@ -40,11 +33,11 @@ let partes_toldo : Image[] = []
 let i = 0
 let lista_minas : tiles.Location[] = []
 let tiempo_final = 0
-//  ---------------------------------------------------------
-//  FASE 1: MENÚ INICIAL
-//  ---------------------------------------------------------
 function menu_inicial() {
     let boton_play: Sprite;
+    
+    juego_empezado = false
+    info.showScore(false)
     if (assets.image`
         escapefromusa
         `) {
@@ -80,11 +73,7 @@ function menu_inicial() {
     cinematica_lore()
 }
 
-//  ---------------------------------------------------------
-//  FASE 2: CINEMÁTICA
-//  ---------------------------------------------------------
 function cinematica_lore() {
-    //  IMAGEN 1: MAPA USA
     if (assets.image`
         mapausa
         `) {
@@ -95,9 +84,7 @@ function cinematica_lore() {
         scene.setBackgroundColor(15)
     }
     
-    //  Negro si falta imagen
-    game.showLongText("El mundo pensaba que lo había visto todo, hasta que el 'Caudillo de Wall Street' decidió que la diplomacia era demasiado lenta y aburrida.", DialogLayout.Bottom)
-    //  IMAGEN 2: TRUMPWORLD
+    game.showLongText("El mundo pensaba que lo había visto todo...", DialogLayout.Bottom)
     if (assets.image`
         trumpworld
         `) {
@@ -106,11 +93,7 @@ function cinematica_lore() {
             `)
     }
     
-    game.showLongText(`
-            En un movimiento que nadie vio venir
-            —principalmente porque no tiene sentido legal—, el rubio más famoso de Florida ha 'adquirido' un activo internacional de gran tamaño.
-            `, DialogLayout.Bottom)
-    //  IMAGEN 3: MADURO PURPLE
+    game.showLongText("En un movimiento que nadie vio venir...", DialogLayout.Bottom)
     if (assets.image`
         maduropurple
         `) {
@@ -119,8 +102,7 @@ function cinematica_lore() {
             `)
     }
     
-    game.showLongText("Sí... Maduro ha sido secuestrado. Narcolás Maduro AKA 'El Exiliado del Caribe', ahora es propiedad privada.", DialogLayout.Bottom)
-    //  IMAGEN 4: MADURO BROS
+    game.showLongText("Sí... Maduro ha sido secuestrado...", DialogLayout.Bottom)
     if (assets.image`
         madurobros
         `) {
@@ -129,8 +111,7 @@ function cinematica_lore() {
             `)
     }
     
-    game.showLongText("La situación es insostenible. El Servicio Secreto está confundido, el SEBIN está en pánico y Twitter... bueno, X... como quieran llamarle, sigue igual de tóxico que siempre.", DialogLayout.Bottom)
-    //  IMAGEN 5: CARA FELIZ (3 DIÁLOGOS)
+    game.showLongText("La situación es insostenible...", DialogLayout.Bottom)
     if (assets.image`
         cara feliz
         `) {
@@ -139,13 +120,9 @@ function cinematica_lore() {
             `)
     }
     
-    //  Texto 1
-    game.showLongText("Tu trabajo no es juzgar la legalidad de esta locura, ni velar por los intereses de ningún país en concreto.", DialogLayout.Bottom)
-    //  Texto 2
-    game.showLongText("Tu misión es intervenir antes de que 'Tu Patito Favorito' A.K.A YFD (Your Favorite Duck) aplique su política de America First convirtiendo a Maduro en el primer souvenir humano de su nueva franquicia.", DialogLayout.Bottom)
-    //  Texto 3
-    game.showLongText("Prepárate para la extracción más políticamente incorrecta de la historia. Inserte moneda para evitar la Tercera Guerra Mundial.", DialogLayout.Bottom)
-    //  IMAGEN 6: POKEMON (FINAL)
+    game.showLongText("Tu trabajo no es juzgar...", DialogLayout.Bottom)
+    game.showLongText("Tu misión es intervenir...", DialogLayout.Bottom)
+    game.showLongText("Prepárate para la extracción...", DialogLayout.Bottom)
     if (assets.image`
         pokemon
         `) {
@@ -153,17 +130,12 @@ function cinematica_lore() {
             pokemon
             `)
         pause(2000)
-        //  Pausa dramática de 2 segundos
         game.showLongText("¡EMPIEZA LA MISIÓN!", DialogLayout.Center)
     }
     
-    //  Pasamos al mapa
     selector_de_mapa()
 }
 
-//  ---------------------------------------------------------
-//  FASE 3: SELECTOR DE MAPA
-//  ---------------------------------------------------------
 function selector_de_mapa() {
     let mapa_visual: Sprite;
     
@@ -174,7 +146,6 @@ function selector_de_mapa() {
     info.showScore(false)
     scene.setBackgroundImage(null)
     scene.setBackgroundColor(9)
-    //  Limpieza segura
     pause(100)
     sprites.destroyAllSpritesOfKind(SpriteKind.Player)
     sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
@@ -184,8 +155,8 @@ function selector_de_mapa() {
     sprites.destroyAllSpritesOfKind(SpriteKind.Meta)
     sprites.destroyAllSpritesOfKind(SpriteKind.Fondo)
     sprites.destroyAllSpritesOfKind(SpriteKind.Projectile)
+    tiles.setCurrentTilemap(null)
     pause(200)
-    //  1. TILEMAP
     if (assets.tile`
         mundo_grande
         `) {
@@ -198,7 +169,6 @@ function selector_de_mapa() {
             `)
     }
     
-    //  2. FONDO GIGANTE
     if (assets.image`
         mapamundi2
         `) {
@@ -210,7 +180,6 @@ function selector_de_mapa() {
         mapa_visual.setPosition(400, 400)
     }
     
-    //  3. CURSOR
     cursor = sprites.create(assets.image`
         maduro
         `, SpriteKind.Cursor)
@@ -218,7 +187,6 @@ function selector_de_mapa() {
     controller.moveSprite(cursor, 150, 150)
     scene.cameraFollowSprite(cursor)
     cursor.setStayInScreen(true)
-    //  --- PUNTOS DE NIVEL ---
     if (assets.image`
         venezuela0
         `) {
@@ -267,7 +235,6 @@ function selector_de_mapa() {
     game.splash("Elige un nivel")
 }
 
-//  --- LÓGICA DE CHOQUE EN EL MAPA ---
 sprites.onOverlap(SpriteKind.Cursor, SpriteKind.IconoNivel, function on_mapa_overlap(sprite: Sprite, otherSprite: Sprite) {
     if (controller.A.isPressed()) {
         if (otherSprite == icono1) {
@@ -295,9 +262,6 @@ sprites.onOverlap(SpriteKind.Cursor, SpriteKind.IconoNivel, function on_mapa_ove
     }
     
 })
-//  ---------------------------------------------------------
-//  FASE 4: JUEGO REAL (NIVEL 1)
-//  ---------------------------------------------------------
 function iniciar_nivel_1() {
     let lugar: tiles.Location;
     let nueva_minita: Sprite;
@@ -411,9 +375,6 @@ function iniciar_nivel_1() {
     
 }
 
-//  ---------------------------------------------------------
-//  FASE 5: JUEGO REAL (NIVEL 2)
-//  ---------------------------------------------------------
 function iniciar_nivel_2() {
     let numero_cuenta: number;
     
@@ -507,13 +468,9 @@ function iniciar_nivel_2() {
     tiempo_inicio = game.runtime()
 }
 
-//  ---------------------------------------------------------
-//  FASE 6: JUEGO REAL (NIVEL 3) - ¡AÉREO!
-//  ---------------------------------------------------------
 function iniciar_nivel_3() {
     
     nivel_actual = 3
-    //  Limpieza
     sprites.destroyAllSpritesOfKind(SpriteKind.Fondo)
     sprites.destroyAllSpritesOfKind(SpriteKind.Cursor)
     sprites.destroyAllSpritesOfKind(SpriteKind.IconoNivel)
@@ -522,14 +479,11 @@ function iniciar_nivel_3() {
     sprites.destroyAllSpritesOfKind(SpriteKind.Meta)
     scene.setBackgroundImage(null)
     scene.setBackgroundColor(9)
-    //  Cielo azul
     info.showScore(true)
     info.setScore(0)
-    //  Cargar Tilemap Nivel 3
     tiles.setCurrentTilemap(tilemap`
         nivel03
         `)
-    //  --- JUGADOR (AVIÓN VENEZOLANO) ---
     let img_avion = null
     if (assets.image`
         maduro-avion-right
@@ -544,21 +498,16 @@ function iniciar_nivel_3() {
             avion_venezuela_pixelart
             `
     } else {
-        //  Fallback
         img_avion = assets.image`
             maduro
             `
     }
     
     nena = sprites.create(img_avion, SpriteKind.Player)
-    //  Posición inicial
     tiles.placeOnTile(nena, tiles.getTileLocation(25, 10))
-    //  --- CONFIGURACIÓN DE VUELO (SIN GRAVEDAD) ---
     nena.ay = 0
-    //  Gravedad CERO
     nena.setStayInScreen(true)
     scene.cameraFollowSprite(nena)
-    //  --- ENEMIGO (HELICÓPTERO) ---
     let img_heli = null
     if (assets.image`
         helicoptero
@@ -567,7 +516,6 @@ function iniciar_nivel_3() {
             helicoptero
             `
     } else {
-        //  Fallback si no existe la imagen "helicoptero"
         img_heli = img`
             . . . . . . . .
             . . . 2 2 2 . .
@@ -578,26 +526,18 @@ function iniciar_nivel_3() {
     
     bot = sprites.create(img_heli, SpriteKind.Enemy)
     tiles.placeOnTile(bot, tiles.getTileLocation(5, 10))
-    //  Empieza delante
     bot.ay = 0
-    //  El enemigo también vuela
     bot.setBounceOnWall(true)
-    //  --- META AL FINAL DEL NIVEL ---
     let meta_avion = sprites.create(assets.image`
             helicopteroruso
             `, SpriteKind.Meta)
     tiles.placeOnTile(meta_avion, tiles.getTileLocation(200, 10))
-    //  --- INICIO ---
     juego_empezado = true
-    //  Movimiento en X e Y (vuelo libre)
     controller.moveSprite(nena, 100, 100)
     tiempo_inicio = game.runtime()
     nena.sayText("¡A VOLAR!", 1000, true)
 }
 
-//  ---------------------------------------------------------
-//  EVENTOS Y FÍSICAS
-//  ---------------------------------------------------------
 function game_over_personalizado() {
     
     juego_empezado = false
@@ -605,7 +545,34 @@ function game_over_personalizado() {
     selector_de_mapa()
 }
 
-//  --- GESTIÓN DE VICTORIAS ---
+function cinematica_final() {
+    
+    juego_empezado = false
+    info.showScore(false)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Player)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Projectile)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Meta)
+    scene.cameraFollowSprite(null)
+    scene.centerCameraAt(80, 60)
+    tiles.setCurrentTilemap(null)
+    if (assets.image`
+        madrerusia
+        `) {
+        scene.setBackgroundImage(assets.image`
+            madrerusia
+            `)
+    } else {
+        scene.setBackgroundColor(2)
+    }
+    
+    pause(500)
+    game.showLongText("¡HEMOS GANADO!", DialogLayout.Center)
+    game.showLongText("Hemos llegado sanos y salvos a la Madre Rusia.", DialogLayout.Bottom)
+    game.splash("Volver al Menú")
+    menu_inicial()
+}
+
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Meta, function on_nivel_completado(sprite2: Sprite, otherSprite2: Sprite) {
     
     tiempo_final = info.score()
@@ -626,32 +593,13 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Meta, function on_nivel_completa
         
         selector_de_mapa()
     } else if (nivel_actual == 3) {
-        //  === FINAL DE JUEGO ===
-        sprites.destroyAllSpritesOfKind(SpriteKind.Player)
-        sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
-        sprites.destroyAllSpritesOfKind(SpriteKind.Projectile)
-        sprites.destroyAllSpritesOfKind(SpriteKind.Meta)
-        if (assets.image`
-            madrerusia
-            `) {
-            scene.setBackgroundImage(assets.image`
-                madrerusia
-                `)
-        } else {
-            scene.setBackgroundColor(2)
-        }
-        
-        game.showLongText("¡HEMOS GANADO!", DialogLayout.Center)
-        game.showLongText("Hemos llegado sanos y salvos a la madre rusia", DialogLayout.Bottom)
-        game.splash("Volver al Menú")
-        menu_inicial()
+        cinematica_final()
     }
     
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Trampolin, function on_on_overlap(sprite3: Sprite, otherSprite3: Sprite) {
     if (nena) {
         if (nivel_actual != 3) {
-            //  Solo rebota en niveles con gravedad
             nena.vy = -250
             if (nena.vx > 0) {
                 nena.vx = 250
@@ -680,7 +628,6 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function on_right_presse
             }
             
         } else if (nivel_actual == 3) {
-            //  Cambio de sprite en vuelo
             if (assets.image`
                 maduro-avion-right
                 `) {
@@ -710,7 +657,6 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function on_left_pressed(
             }
             
         } else if (nivel_actual == 3) {
-            //  Cambio de sprite en vuelo
             if (assets.image`
                 maduro-avion-left
                 `) {
@@ -725,7 +671,6 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function on_left_pressed(
     
 })
 function on_a_pressed() {
-    //  Salto solo si hay gravedad (Niveles 1 y 2)
     if (nivel_actual != 3) {
         if (nena && nena.isHittingTile(CollisionDirection.Bottom)) {
             nena.vy = -155
@@ -740,15 +685,11 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, on_a_pressed)
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function on_on_overlap2(sprite22: Sprite, otherSprite22: Sprite) {
     game_over_personalizado()
 })
-//  ==========================================
-//  SISTEMA DE LLUVIA DE BOMBAS
-//  ==========================================
 game.onUpdateInterval(1000, function generar_bomba() {
     let cam_x: number;
     let cam_top: number;
     let img_bomba: Image;
     let bomba: Sprite;
-    //  Solo caen si el juego ha empezado y NO estamos en el Nivel 3
     if (juego_empezado && nivel_actual == 2 && randint(0, 100) < probabilidad_bomba) {
         cam_x = scene.cameraProperty(CameraProperty.X)
         cam_top = scene.cameraProperty(CameraProperty.Top)
@@ -776,10 +717,6 @@ game.onUpdateInterval(1000, function generar_bomba() {
     }
     
 })
-//  ==========================================
-//  SISTEMA DE DISPARO DEL HELICÓPTERO (CORREGIDO FINAL)
-//  ==========================================
-//  Dispara cada 500ms (1.5s)
 game.onUpdateInterval(2500, function disparar_helicoptero() {
     let img_bala: Image;
     let misil: Sprite;
@@ -788,9 +725,7 @@ game.onUpdateInterval(2500, function disparar_helicoptero() {
     let dy: number;
     let angulo: number;
     let velocidad_disparo: number;
-    //  Dispara solo en nivel 3 y si el bot existe
     if (juego_empezado && nivel_actual == 3 && bot) {
-        //  Crear imagen de "bala" o "gota"
         img_bala = null
         if (assets.image`
             misil
@@ -806,19 +741,14 @@ game.onUpdateInterval(2500, function disparar_helicoptero() {
         }
         
         misil = sprites.create(img_bala, SpriteKind.Projectile)
-        //  --- AJUSTE DE POSICIÓN ---
-        //  Salida por el "morro" lateral
         offset_x = 0
         if (nena.x < bot.x) {
             offset_x = -70
         } else {
-            //  Izquierda
             offset_x = 70
         }
         
-        //  Derecha
         misil.setPosition(bot.x + offset_x, bot.y + 5)
-        //  --- CÁLCULO DE DIRECCIÓN RECTA (LÁSER) ---
         dx = nena.x - misil.x
         dy = nena.y - misil.y
         angulo = Math.atan2(dy, dx)
@@ -842,7 +772,6 @@ scene.onHitWall(SpriteKind.Projectile, function on_bomb_hit_wall(bomb2: Sprite, 
     }
     
 })
-//  --- CHOQUE CON NUBE EN NIVEL 3 ---
 if (assets.tile`
     nube02
     `) {
@@ -856,7 +785,6 @@ if (assets.tile`
     })
 }
 
-//  LÓGICA PRINCIPAL (UPDATE)
 let tiles_petroleo = [assets.tile`
         petroleo0
         `, assets.tile`
@@ -887,7 +815,6 @@ game.onUpdate(function on_on_update() {
         return
     }
     
-    //  Lógica específica de suelo (Solo Niveles 1 y 2)
     if (juego_empezado && nivel_actual != 3) {
         loc_actual = nena.tilemapLocation()
         columna = loc_actual.column
@@ -916,7 +843,6 @@ game.onUpdate(function on_on_update() {
             
         }
         
-        //  Lógica del Bot (Solo si existe)
         if (bot) {
             distancia3 = Math.abs(nena.x - bot.x)
             if (nivel_actual == 1) {
@@ -973,9 +899,7 @@ game.onUpdate(function on_on_update() {
         }
         
     } else if (juego_empezado && nivel_actual == 3) {
-        //  Lógica específica de vuelo (Nivel 3)
         if (bot) {
-            //  === VELOCIDAD DINÁMICA AÉREA ===
             distancia3 = Math.abs(nena.x - bot.x)
             if (distancia3 > 120) {
                 velocidad3 = 200
@@ -985,21 +909,18 @@ game.onUpdate(function on_on_update() {
                 velocidad3 = 40
             }
             
-            //  Perseguir en X
             if (nena.x < bot.x) {
                 bot.vx = -velocidad3
             } else {
                 bot.vx = velocidad3
             }
             
-            //  Perseguir en Y
             if (nena.y < bot.y) {
                 bot.vy = -velocidad3
             } else {
                 bot.vy = velocidad3
             }
             
-            //  Rebote en paredes
             if (bot.isHittingTile(CollisionDirection.Left) || bot.isHittingTile(CollisionDirection.Right)) {
                 bot.vx = -bot.vx
             }
@@ -1009,7 +930,6 @@ game.onUpdate(function on_on_update() {
     }
     
 })
-//  --- CHIVATO DE COORDENADAS ---
 game.onUpdate(function debug_coordenadas_mapa() {
     let mi_cursor: Sprite;
     let col: any;
@@ -1023,5 +943,5 @@ game.onUpdate(function debug_coordenadas_mapa() {
     }
     
 })
-//  --- INICIO DEL JUEGO ---
-menu_inicial()
+// menu_inicial()
+iniciar_nivel_3()
