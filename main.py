@@ -6,28 +6,26 @@ class SpriteKind:
     Cursor = SpriteKind.create()
     UI = SpriteKind.create()
     Fondo = SpriteKind.create()
+    Meta = SpriteKind.create()
 
-# --- 1. VARIABLES GLOBALES ---
 bot_mirando_derecha = False
 velocidad3 = 0
 distancia3 = 0
 juego_empezado = False
-tiempo_inicio = 0 # Variable para guardar cuándo empezamos
+tiempo_inicio = 0
 
-# Personajes y objetos
+nivel_desbloqueado = 1
+nivel_actual = 0
+
 nena: Sprite = None
 bot: Sprite = None
 tanque: Sprite = None
 tanque02: Sprite = None
 
-# Variables para los iconos
 icono1: Sprite = None
 icono2: Sprite = None
 icono3: Sprite = None
 
-# ---------------------------------------------------------
-# FASE 1: MENÚ INICIAL
-# ---------------------------------------------------------
 def menu_inicial():
     if assets.image("escape-to-usa2"):
         scene.set_background_image(assets.image("escape-to-usa2"))
@@ -49,33 +47,25 @@ def menu_inicial():
             
     cinematica_lore()
 
-# ---------------------------------------------------------
-# FASE 2: CINEMÁTICA
-# ---------------------------------------------------------
 def cinematica_lore():
-    # IMAGEN 1
     if assets.image("mapausa"):
         scene.set_background_image(assets.image("mapausa"))
     else:
         scene.set_background_color(15)
     game.show_long_text("El mundo pensaba que lo había visto todo, hasta que el 'Caudillo de Wall Street' decidió que la diplomacia era demasiado lenta y aburrida.", DialogLayout.BOTTOM)
 
-    # IMAGEN 2
     if assets.image("trumpworld"):
         scene.set_background_image(assets.image("trumpworld"))
     game.show_long_text("En un movimiento que nadie vio venir —principalmente porque no tiene sentido legal—, el rubio más famoso de Florida ha 'adquirido' un activo internacional de gran tamaño.", DialogLayout.BOTTOM)
 
-    # IMAGEN 3
     if assets.image("maduropurple"):
         scene.set_background_image(assets.image("maduropurple"))
     game.show_long_text("Sí... Maduro ha sido secuestrado. Narcolás Maduro AKA 'El Exiliado del Caribe', ahora es propiedad privada.", DialogLayout.BOTTOM)
 
-    # IMAGEN 4
     if assets.image("madurobros"):
         scene.set_background_image(assets.image("madurobros"))
     game.show_long_text("La situación es insostenible. El Servicio Secreto está confundido, el SEBIN está en pánico y Twitter... bueno, X... como quieran llamarle, sigue igual de tóxico que siempre.", DialogLayout.BOTTOM)
 
-    # IMAGEN 5
     if assets.image("cara feliz"):
         scene.set_background_image(assets.image("cara feliz"))
     
@@ -83,7 +73,6 @@ def cinematica_lore():
     game.show_long_text("Tu misión es intervenir antes de que 'Tu Patito Favorito' A.K.A YFD (Your Favorite Duck) aplique su política de America First convirtiendo a Maduro en el primer souvenir humano de su nueva franquicia.", DialogLayout.BOTTOM)
     game.show_long_text("Prepárate para la extracción más políticamente incorrecta de la historia. Inserte moneda para evitar la Tercera Guerra Mundial.", DialogLayout.BOTTOM)
 
-    # IMAGEN 6
     if assets.image("pokemon"):
         scene.set_background_image(assets.image("pokemon"))
         pause(2000)
@@ -91,9 +80,6 @@ def cinematica_lore():
 
     selector_de_mapa()
 
-# ---------------------------------------------------------
-# FASE 3: SELECTOR DE MAPA
-# ---------------------------------------------------------
 def selector_de_mapa():
     global juego_empezado, nena, bot, icono1, icono2, icono3
     
@@ -101,7 +87,6 @@ def selector_de_mapa():
     nena = None
     bot = None
     
-    # Ocultamos la puntuación (que usamos como cronómetro) al volver al mapa
     info.set_score(0)
     info.show_score(False)
     
@@ -113,23 +98,21 @@ def selector_de_mapa():
     sprites.destroy_all_sprites_of_kind(SpriteKind.Obstacle)
     sprites.destroy_all_sprites_of_kind(SpriteKind.Trampolin)
     sprites.destroy_all_sprites_of_kind(SpriteKind.UI)
+    sprites.destroy_all_sprites_of_kind(SpriteKind.Meta)
     
     pause(500)
     
-    # 1. TILEMAP
     if assets.tile("mundo_grande"):
         tiles.set_current_tilemap(tilemap("mundo_grande"))
     else:
         tiles.set_current_tilemap(tilemap("level1"))
 
-    # 2. FONDO GIGANTE
     if assets.image("mapamundi2"):
         mapa_visual = sprites.create(assets.image("mapamundi2"), SpriteKind.Fondo)
         mapa_visual.z = -100
         mapa_visual.set_flag(SpriteFlag.GHOST, True)
         mapa_visual.set_position(400, 400)
     
-    # 3. CURSOR
     cursor = sprites.create(assets.image("maduro"), SpriteKind.Cursor)
     tiles.place_on_tile(cursor, tiles.get_tile_location(10, 26))
     
@@ -137,16 +120,22 @@ def selector_de_mapa():
     scene.camera_follow_sprite(cursor)
     cursor.set_stay_in_screen(True)
     
-    # --- PUNTOS DE NIVEL ---
     if assets.image("venezuela0"):
         icono1 = sprites.create(assets.image("venezuela0"), SpriteKind.IconoNivel)
         tiles.place_on_tile(icono1, tiles.get_tile_location(12, 26))
-        icono1.say_text("1", 50000, False)
+        if nivel_desbloqueado > 1:
+            icono1.say_text("OK", 50000, False)
+        else:
+            icono1.say_text("1", 50000, False)
 
     if assets.image("barco venezuela"):
         icono2 = sprites.create(assets.image("barco venezuela"), SpriteKind.IconoNivel)
         tiles.place_on_tile(icono2, tiles.get_tile_location(16, 18))
-        icono2.say_text("2", 50000, False)
+        
+        if nivel_desbloqueado >= 2:
+            icono2.say_text("2", 50000, False)
+        else:
+            icono2.say_text("X", 50000, False)
 
     if assets.image("comunista"):
         icono3 = sprites.create(assets.image("comunista"), SpriteKind.IconoNivel)
@@ -155,36 +144,41 @@ def selector_de_mapa():
     
     game.splash("Elige un nivel")
 
-# --- LÓGICA DE CHOQUE ---
 def on_mapa_overlap(sprite, otherSprite):
     if controller.A.is_pressed():
+        
         if otherSprite == icono1:
             iniciar_nivel_1()
+            
         elif otherSprite == icono2:
-            game.splash("Nivel 2", "¡Próximamente!")
+            if nivel_desbloqueado >= 2:
+                game.splash("Nivel 2", "¡Huye del ejército!")
+                iniciar_nivel_2()
+            else:
+                game.splash("BLOQUEADO", "Completa el Nivel 1 primero")
             pause(500)
+            
         elif otherSprite == icono3:
-            game.splash("Nivel 3", "¡En construcción!")
+            if nivel_desbloqueado >= 3:
+                game.splash("Nivel 3", "¡Próximamente!")
+            else:
+                game.splash("BLOQUEADO", "Completa el Nivel 2 primero")
             pause(500)
 
 sprites.on_overlap(SpriteKind.Cursor, SpriteKind.IconoNivel, on_mapa_overlap)
 
-# ---------------------------------------------------------
-# FASE 4: EL JUEGO REAL (NIVEL 1)
-# ---------------------------------------------------------
 def iniciar_nivel_1():
-    global tanque, tanque02, bot, nena, juego_empezado, tiempo_inicio
+    global tanque, tanque02, bot, nena, juego_empezado, tiempo_inicio, nivel_actual
+    
+    nivel_actual = 1
     
     sprites.destroy_all_sprites_of_kind(SpriteKind.Fondo)
     sprites.destroy_all_sprites_of_kind(SpriteKind.Cursor)
     sprites.destroy_all_sprites_of_kind(SpriteKind.IconoNivel)
     scene.set_background_image(None)
     
-    # --- CRONÓMETRO (Setup) ---
-    # Mostramos la puntuación, pero la usaremos para mostrar SEGUNDOS
     info.show_score(True)
     info.set_score(0)
-    # Guardamos el tiempo actual (en milisegundos)
     tiempo_inicio = game.runtime()
     
     tiles.set_current_tilemap(tilemap("prova"))
@@ -194,7 +188,7 @@ def iniciar_nivel_1():
     tanque02 = sprites.create(assets.image("tanque"), SpriteKind.Obstacle)
     tiles.place_on_tile(tanque02, tiles.get_tile_location(146, 10))
     
-    mySpriteBarco = sprites.create(assets.image("barco venezuela"), SpriteKind.player)
+    mySpriteBarco = sprites.create(assets.image("barco venezuela"), SpriteKind.Meta)
     tiles.place_on_tile(mySpriteBarco, tiles.get_tile_location(245, 10))
     
     bot = sprites.create(assets.image("soldado0"), SpriteKind.enemy)
@@ -252,15 +246,65 @@ def iniciar_nivel_1():
     elif controller.left.is_pressed():
         animation.run_image_animation(nena, assets.animation("maduro-left"), 200, True)
 
-# ---------------------------------------------------------
-# EVENTOS Y FÍSICAS
-# ---------------------------------------------------------
+def iniciar_nivel_2():
+    global bot, nena, juego_empezado, tiempo_inicio, nivel_actual
+    
+    nivel_actual = 2
+    
+    sprites.destroy_all_sprites_of_kind(SpriteKind.Fondo)
+    sprites.destroy_all_sprites_of_kind(SpriteKind.Cursor)
+    sprites.destroy_all_sprites_of_kind(SpriteKind.IconoNivel)
+    scene.set_background_image(None)
+    
+    info.show_score(True)
+    info.set_score(0)
+    tiempo_inicio = game.runtime()
+    
+    tiles.set_current_tilemap(tilemap("nivel02"))
+    
+    nena = sprites.create(assets.image("maduro"), SpriteKind.player)
+    tiles.place_on_tile(nena, tiles.get_tile_location(7, 10))
+    nena.ay = 350
+    nena.set_stay_in_screen(True)
+    scene.camera_follow_sprite(nena)
+    
+    bot = sprites.create(assets.image("usarmy"), SpriteKind.enemy)
+    tiles.place_on_tile(bot, tiles.get_tile_location(4, 10))
+    bot.ay = 350
+    bot.set_bounce_on_wall(True)
+    
+    mySpriteBarco = sprites.create(assets.image("barco venezuela"), SpriteKind.Meta)
+    tiles.place_on_tile(mySpriteBarco, tiles.get_tile_location(50, 10))
+    
+    juego_empezado = True
+    controller.move_sprite(nena, 100, 0)
 
 def game_over_personalizado():
     global juego_empezado
     juego_empezado = False
     game.splash("¡HAS MUERTO!", "Volviendo al mapa...")
     selector_de_mapa()
+
+def on_nivel_completado(sprite, otherSprite):
+    global nivel_desbloqueado
+    
+    tiempo_final = info.score()
+    
+    if nivel_actual == 1:
+        game.splash("¡NIVEL 1 SUPERADO!", "Tiempo: " + str(tiempo_final) + "s")
+        if nivel_desbloqueado < 2:
+            nivel_desbloqueado = 2
+            game.splash("¡NIVEL 2 DESBLOQUEADO!")
+            
+    elif nivel_actual == 2:
+        game.splash("¡NIVEL 2 SUPERADO!", "Tiempo: " + str(tiempo_final) + "s")
+        if nivel_desbloqueado < 3:
+            nivel_desbloqueado = 3
+            game.splash("¡NIVEL 3 DESBLOQUEADO!")
+    
+    selector_de_mapa()
+
+sprites.on_overlap(SpriteKind.player, SpriteKind.Meta, on_nivel_completado)
 
 def on_on_overlap(sprite, otherSprite):
     if nena:
@@ -291,7 +335,6 @@ def on_on_overlap2(sprite2, otherSprite2):
     game_over_personalizado()
 sprites.on_overlap(SpriteKind.player, SpriteKind.enemy, on_on_overlap2)
 
-# LÓGICA PRINCIPAL (UPDATE)
 tiles_petroleo = [
     assets.tile("petroleo0"), assets.tile("petroleo02"), assets.tile("petroleo1")
 ]
@@ -300,11 +343,8 @@ tile_mina = assets.tile("interrogacion")
 def on_on_update():
     global distancia3, velocidad3, bot_mirando_derecha
     
-    # --- LÓGICA DEL CRONÓMETRO ---
-    # Si estamos jugando, actualizamos el "Score" con los segundos pasados
     if juego_empezado:
         tiempo_actual = game.runtime()
-        # Calculamos segundos: (Tiempo actual - Tiempo inicio) / 1000
         segundos = int((tiempo_actual - tiempo_inicio) / 1000)
         info.set_score(segundos)
     
@@ -334,40 +374,38 @@ def on_on_update():
             else:
                 controller.move_sprite(nena, 100, 0)
 
-        # IA DEL BOT
         distancia3 = abs(nena.x - bot.x)
-        if distancia3 > 90:
-            velocidad3 = 320
-        elif distancia3 > 30:
-            velocidad3 = 190
-        else:
-            velocidad3 = 95
-            
+        
+        if nivel_actual == 1:
+            if distancia3 > 90:
+                velocidad3 = 320
+            elif distancia3 > 30:
+                velocidad3 = 190
+            else:
+                velocidad3 = 95
+        
+        elif nivel_actual == 2:
+            if distancia3 > 80:
+                velocidad3 = 70
+            else:
+                velocidad3 = 40
+                
         if nena.x < bot.x:
             bot.vx = 0 - velocidad3
-            if bot_mirando_derecha == True:
-                animation.run_image_animation(bot, assets.animation("soldado-left0"), 500, True)
-                bot_mirando_derecha = False
+            if nivel_actual == 1:
+                if bot_mirando_derecha == True:
+                    animation.run_image_animation(bot, assets.animation("soldado-left0"), 500, True)
+                    bot_mirando_derecha = False
         else:
             bot.vx = velocidad3
-            if bot_mirando_derecha == False:
-                animation.run_image_animation(bot, assets.animation("soldado-right0"), 200, True)
-                bot_mirando_derecha = True
+            if nivel_actual == 1:
+                if bot_mirando_derecha == False:
+                    animation.run_image_animation(bot, assets.animation("soldado-right0"), 200, True)
+                    bot_mirando_derecha = True
                 
         if bot.is_hitting_tile(CollisionDirection.LEFT) or bot.is_hitting_tile(CollisionDirection.RIGHT):
             if bot.is_hitting_tile(CollisionDirection.BOTTOM):
                 bot.vy = -155
 game.on_update(on_on_update)
 
-# --- CHIVATO DE COORDENADAS ---
-def debug_coordenadas_mapa():
-    lista_cursores = sprites.all_of_kind(SpriteKind.Cursor)
-    if len(lista_cursores) > 0:
-        mi_cursor = lista_cursores[0]
-        col = int(mi_cursor.x / 16)
-        fila = int(mi_cursor.y / 16)
-        mi_cursor.say_text(str(col) + ", " + str(fila))
-game.on_update(debug_coordenadas_mapa)
-
-# --- INICIO DEL JUEGO ---
 menu_inicial()

@@ -5,27 +5,23 @@ namespace SpriteKind {
     export const Cursor = SpriteKind.create()
     export const UI = SpriteKind.create()
     export const Fondo = SpriteKind.create()
+    export const Meta = SpriteKind.create()
 }
 
-//  --- 1. VARIABLES GLOBALES ---
 let bot_mirando_derecha = false
 let velocidad3 = 0
 let distancia3 = 0
 let juego_empezado = false
 let tiempo_inicio = 0
-//  Variable para guardar cuándo empezamos
-//  Personajes y objetos
+let nivel_desbloqueado = 1
+let nivel_actual = 0
 let nena : Sprite = null
 let bot : Sprite = null
 let tanque : Sprite = null
 let tanque02 : Sprite = null
-//  Variables para los iconos
 let icono1 : Sprite = null
 let icono2 : Sprite = null
 let icono3 : Sprite = null
-//  ---------------------------------------------------------
-//  FASE 1: MENÚ INICIAL
-//  ---------------------------------------------------------
 function menu_inicial() {
     let boton_play: Sprite;
     if (assets.image`escape-to-usa2`) {
@@ -55,11 +51,7 @@ function menu_inicial() {
     cinematica_lore()
 }
 
-//  ---------------------------------------------------------
-//  FASE 2: CINEMÁTICA
-//  ---------------------------------------------------------
 function cinematica_lore() {
-    //  IMAGEN 1
     if (assets.image`mapausa`) {
         scene.setBackgroundImage(assets.image`mapausa`)
     } else {
@@ -67,25 +59,21 @@ function cinematica_lore() {
     }
     
     game.showLongText("El mundo pensaba que lo había visto todo, hasta que el 'Caudillo de Wall Street' decidió que la diplomacia era demasiado lenta y aburrida.", DialogLayout.Bottom)
-    //  IMAGEN 2
     if (assets.image`trumpworld`) {
         scene.setBackgroundImage(assets.image`trumpworld`)
     }
     
     game.showLongText("En un movimiento que nadie vio venir —principalmente porque no tiene sentido legal—, el rubio más famoso de Florida ha 'adquirido' un activo internacional de gran tamaño.", DialogLayout.Bottom)
-    //  IMAGEN 3
     if (assets.image`maduropurple`) {
         scene.setBackgroundImage(assets.image`maduropurple`)
     }
     
     game.showLongText("Sí... Maduro ha sido secuestrado. Narcolás Maduro AKA 'El Exiliado del Caribe', ahora es propiedad privada.", DialogLayout.Bottom)
-    //  IMAGEN 4
     if (assets.image`madurobros`) {
         scene.setBackgroundImage(assets.image`madurobros`)
     }
     
     game.showLongText("La situación es insostenible. El Servicio Secreto está confundido, el SEBIN está en pánico y Twitter... bueno, X... como quieran llamarle, sigue igual de tóxico que siempre.", DialogLayout.Bottom)
-    //  IMAGEN 5
     if (assets.image`cara feliz`) {
         scene.setBackgroundImage(assets.image`cara feliz`)
     }
@@ -93,7 +81,6 @@ function cinematica_lore() {
     game.showLongText("Tu trabajo no es juzgar la legalidad de esta locura, ni velar por los intereses de ningún país en concreto.", DialogLayout.Bottom)
     game.showLongText("Tu misión es intervenir antes de que 'Tu Patito Favorito' A.K.A YFD (Your Favorite Duck) aplique su política de America First convirtiendo a Maduro en el primer souvenir humano de su nueva franquicia.", DialogLayout.Bottom)
     game.showLongText("Prepárate para la extracción más políticamente incorrecta de la historia. Inserte moneda para evitar la Tercera Guerra Mundial.", DialogLayout.Bottom)
-    //  IMAGEN 6
     if (assets.image`pokemon`) {
         scene.setBackgroundImage(assets.image`pokemon`)
         pause(2000)
@@ -103,16 +90,12 @@ function cinematica_lore() {
     selector_de_mapa()
 }
 
-//  ---------------------------------------------------------
-//  FASE 3: SELECTOR DE MAPA
-//  ---------------------------------------------------------
 function selector_de_mapa() {
     let mapa_visual: Sprite;
     
     juego_empezado = false
     nena = null
     bot = null
-    //  Ocultamos la puntuación (que usamos como cronómetro) al volver al mapa
     info.setScore(0)
     info.showScore(false)
     scene.setBackgroundImage(null)
@@ -122,15 +105,14 @@ function selector_de_mapa() {
     sprites.destroyAllSpritesOfKind(SpriteKind.Obstacle)
     sprites.destroyAllSpritesOfKind(SpriteKind.Trampolin)
     sprites.destroyAllSpritesOfKind(SpriteKind.UI)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Meta)
     pause(500)
-    //  1. TILEMAP
     if (assets.tile`mundo_grande`) {
         tiles.setCurrentTilemap(tilemap`mundo_grande`)
     } else {
         tiles.setCurrentTilemap(tilemap`level1`)
     }
     
-    //  2. FONDO GIGANTE
     if (assets.image`mapamundi2`) {
         mapa_visual = sprites.create(assets.image`mapamundi2`, SpriteKind.Fondo)
         mapa_visual.z = -100
@@ -138,23 +120,31 @@ function selector_de_mapa() {
         mapa_visual.setPosition(400, 400)
     }
     
-    //  3. CURSOR
     let cursor = sprites.create(assets.image`maduro`, SpriteKind.Cursor)
     tiles.placeOnTile(cursor, tiles.getTileLocation(10, 26))
     controller.moveSprite(cursor, 150, 150)
     scene.cameraFollowSprite(cursor)
     cursor.setStayInScreen(true)
-    //  --- PUNTOS DE NIVEL ---
     if (assets.image`venezuela0`) {
         icono1 = sprites.create(assets.image`venezuela0`, SpriteKind.IconoNivel)
         tiles.placeOnTile(icono1, tiles.getTileLocation(12, 26))
-        icono1.sayText("1", 50000, false)
+        if (nivel_desbloqueado > 1) {
+            icono1.sayText("OK", 50000, false)
+        } else {
+            icono1.sayText("1", 50000, false)
+        }
+        
     }
     
     if (assets.image`barco venezuela`) {
         icono2 = sprites.create(assets.image`barco venezuela`, SpriteKind.IconoNivel)
         tiles.placeOnTile(icono2, tiles.getTileLocation(16, 18))
-        icono2.sayText("2", 50000, false)
+        if (nivel_desbloqueado >= 2) {
+            icono2.sayText("2", 50000, false)
+        } else {
+            icono2.sayText("X", 50000, false)
+        }
+        
     }
     
     if (assets.image`comunista`) {
@@ -166,25 +156,32 @@ function selector_de_mapa() {
     game.splash("Elige un nivel")
 }
 
-//  --- LÓGICA DE CHOQUE ---
 sprites.onOverlap(SpriteKind.Cursor, SpriteKind.IconoNivel, function on_mapa_overlap(sprite: Sprite, otherSprite: Sprite) {
     if (controller.A.isPressed()) {
         if (otherSprite == icono1) {
             iniciar_nivel_1()
         } else if (otherSprite == icono2) {
-            game.splash("Nivel 2", "¡Próximamente!")
+            if (nivel_desbloqueado >= 2) {
+                game.splash("Nivel 2", "¡Huye del ejército!")
+                iniciar_nivel_2()
+            } else {
+                game.splash("BLOQUEADO", "Completa el Nivel 1 primero")
+            }
+            
             pause(500)
         } else if (otherSprite == icono3) {
-            game.splash("Nivel 3", "¡En construcción!")
+            if (nivel_desbloqueado >= 3) {
+                game.splash("Nivel 3", "¡Próximamente!")
+            } else {
+                game.splash("BLOQUEADO", "Completa el Nivel 2 primero")
+            }
+            
             pause(500)
         }
         
     }
     
 })
-//  ---------------------------------------------------------
-//  FASE 4: EL JUEGO REAL (NIVEL 1)
-//  ---------------------------------------------------------
 function iniciar_nivel_1() {
     let lugar: tiles.Location;
     let nueva_minita: Sprite;
@@ -195,22 +192,20 @@ function iniciar_nivel_1() {
     let nuevo_toldo: Sprite;
     let numero: number;
     
+    nivel_actual = 1
     sprites.destroyAllSpritesOfKind(SpriteKind.Fondo)
     sprites.destroyAllSpritesOfKind(SpriteKind.Cursor)
     sprites.destroyAllSpritesOfKind(SpriteKind.IconoNivel)
     scene.setBackgroundImage(null)
-    //  --- CRONÓMETRO (Setup) ---
-    //  Mostramos la puntuación, pero la usaremos para mostrar SEGUNDOS
     info.showScore(true)
     info.setScore(0)
-    //  Guardamos el tiempo actual (en milisegundos)
     tiempo_inicio = game.runtime()
     tiles.setCurrentTilemap(tilemap`prova`)
     tanque = sprites.create(assets.image`tanque`, SpriteKind.Obstacle)
     tiles.placeOnTile(tanque, tiles.getTileLocation(116, 10))
     tanque02 = sprites.create(assets.image`tanque`, SpriteKind.Obstacle)
     tiles.placeOnTile(tanque02, tiles.getTileLocation(146, 10))
-    let mySpriteBarco = sprites.create(assets.image`barco venezuela`, SpriteKind.Player)
+    let mySpriteBarco = sprites.create(assets.image`barco venezuela`, SpriteKind.Meta)
     tiles.placeOnTile(mySpriteBarco, tiles.getTileLocation(245, 10))
     bot = sprites.create(assets.image`soldado0`, SpriteKind.Enemy)
     tiles.placeOnTile(bot, tiles.getTileLocation(1, 7))
@@ -268,9 +263,32 @@ function iniciar_nivel_1() {
     
 }
 
-//  ---------------------------------------------------------
-//  EVENTOS Y FÍSICAS
-//  ---------------------------------------------------------
+function iniciar_nivel_2() {
+    
+    nivel_actual = 2
+    sprites.destroyAllSpritesOfKind(SpriteKind.Fondo)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Cursor)
+    sprites.destroyAllSpritesOfKind(SpriteKind.IconoNivel)
+    scene.setBackgroundImage(null)
+    info.showScore(true)
+    info.setScore(0)
+    tiempo_inicio = game.runtime()
+    tiles.setCurrentTilemap(tilemap`nivel02`)
+    nena = sprites.create(assets.image`maduro`, SpriteKind.Player)
+    tiles.placeOnTile(nena, tiles.getTileLocation(7, 10))
+    nena.ay = 350
+    nena.setStayInScreen(true)
+    scene.cameraFollowSprite(nena)
+    bot = sprites.create(assets.image`usarmy`, SpriteKind.Enemy)
+    tiles.placeOnTile(bot, tiles.getTileLocation(4, 10))
+    bot.ay = 350
+    bot.setBounceOnWall(true)
+    let mySpriteBarco = sprites.create(assets.image`barco venezuela`, SpriteKind.Meta)
+    tiles.placeOnTile(mySpriteBarco, tiles.getTileLocation(50, 10))
+    juego_empezado = true
+    controller.moveSprite(nena, 100, 0)
+}
+
 function game_over_personalizado() {
     
     juego_empezado = false
@@ -278,6 +296,27 @@ function game_over_personalizado() {
     selector_de_mapa()
 }
 
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Meta, function on_nivel_completado(sprite: Sprite, otherSprite: Sprite) {
+    
+    let tiempo_final = info.score()
+    if (nivel_actual == 1) {
+        game.splash("¡NIVEL 1 SUPERADO!", "Tiempo: " + ("" + tiempo_final) + "s")
+        if (nivel_desbloqueado < 2) {
+            nivel_desbloqueado = 2
+            game.splash("¡NIVEL 2 DESBLOQUEADO!")
+        }
+        
+    } else if (nivel_actual == 2) {
+        game.splash("¡NIVEL 2 SUPERADO!", "Tiempo: " + ("" + tiempo_final) + "s")
+        if (nivel_desbloqueado < 3) {
+            nivel_desbloqueado = 3
+            game.splash("¡NIVEL 3 DESBLOQUEADO!")
+        }
+        
+    }
+    
+    selector_de_mapa()
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Trampolin, function on_on_overlap(sprite: Sprite, otherSprite: Sprite) {
     if (nena) {
         nena.vy = -250
@@ -314,7 +353,6 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, on_a_pressed)
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function on_on_overlap2(sprite2: Sprite, otherSprite2: Sprite) {
     game_over_personalizado()
 })
-//  LÓGICA PRINCIPAL (UPDATE)
 let tiles_petroleo = [assets.tile`petroleo0`, assets.tile`petroleo02`, assets.tile`petroleo1`]
 let tile_mina = assets.tile`interrogacion`
 game.onUpdate(function on_on_update() {
@@ -327,11 +365,8 @@ game.onUpdate(function on_on_update() {
     let imagen_suelo: Image;
     let estoy_en_petroleo: boolean;
     
-    //  --- LÓGICA DEL CRONÓMETRO ---
-    //  Si estamos jugando, actualizamos el "Score" con los segundos pasados
     if (juego_empezado) {
         tiempo_actual = game.runtime()
-        //  Calculamos segundos: (Tiempo actual - Tiempo inicio) / 1000
         segundos = Math.trunc((tiempo_actual - tiempo_inicio) / 1000)
         info.setScore(segundos)
     }
@@ -368,28 +403,43 @@ game.onUpdate(function on_on_update() {
             
         }
         
-        //  IA DEL BOT
         distancia3 = Math.abs(nena.x - bot.x)
-        if (distancia3 > 90) {
-            velocidad3 = 320
-        } else if (distancia3 > 30) {
-            velocidad3 = 190
-        } else {
-            velocidad3 = 95
+        if (nivel_actual == 1) {
+            if (distancia3 > 90) {
+                velocidad3 = 320
+            } else if (distancia3 > 30) {
+                velocidad3 = 190
+            } else {
+                velocidad3 = 95
+            }
+            
+        } else if (nivel_actual == 2) {
+            if (distancia3 > 80) {
+                velocidad3 = 70
+            } else {
+                velocidad3 = 40
+            }
+            
         }
         
         if (nena.x < bot.x) {
             bot.vx = 0 - velocidad3
-            if (bot_mirando_derecha == true) {
-                animation.runImageAnimation(bot, assets.animation`soldado-left0`, 500, true)
-                bot_mirando_derecha = false
+            if (nivel_actual == 1) {
+                if (bot_mirando_derecha == true) {
+                    animation.runImageAnimation(bot, assets.animation`soldado-left0`, 500, true)
+                    bot_mirando_derecha = false
+                }
+                
             }
             
         } else {
             bot.vx = velocidad3
-            if (bot_mirando_derecha == false) {
-                animation.runImageAnimation(bot, assets.animation`soldado-right0`, 200, true)
-                bot_mirando_derecha = true
+            if (nivel_actual == 1) {
+                if (bot_mirando_derecha == false) {
+                    animation.runImageAnimation(bot, assets.animation`soldado-right0`, 200, true)
+                    bot_mirando_derecha = true
+                }
+                
             }
             
         }
@@ -404,19 +454,4 @@ game.onUpdate(function on_on_update() {
     }
     
 })
-//  --- CHIVATO DE COORDENADAS ---
-game.onUpdate(function debug_coordenadas_mapa() {
-    let mi_cursor: Sprite;
-    let col: any;
-    let fila: any;
-    let lista_cursores = sprites.allOfKind(SpriteKind.Cursor)
-    if (lista_cursores.length > 0) {
-        mi_cursor = lista_cursores[0]
-        col = Math.trunc(mi_cursor.x / 16)
-        fila = Math.trunc(mi_cursor.y / 16)
-        mi_cursor.sayText("" + col + ", " + ("" + fila))
-    }
-    
-})
-//  --- INICIO DEL JUEGO ---
 menu_inicial()
