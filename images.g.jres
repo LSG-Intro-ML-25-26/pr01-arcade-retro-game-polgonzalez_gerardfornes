@@ -154,6 +154,16 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "avionvenezuela"
     },
+    "image32": {
+        "data": "hwQQABAAAAAAAADw/w//DwAAAPAV8hHxAAAAAI/yEfEAAAAA8PIR8QDw//8P/xH/AP/8///w8fHw//zf/fAf8fDMz9/98BHx///8/93/Ef///8+/0f3x8c/P///f/RHx//z/3c39EfH//N/dzfER8fD////8/5nxAP///w8An/EAAP//AADwDw==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "maduro-avion-right"
+    },
+    "image33": {
+        "data": "hwQQABAAAAAAAP//AADwDwD///8PAJ/x8P////z/mfH//N/dzfER8f/8/93N/RHxz8///9/9EfH//8+/0f3x8f///P/d/xH/8MzP3/3wEfHw//zf/fAf8QD//P//8PHxAPD//w//Ef8AAAAA8PIR8QAAAACP8hHxAAAA8BXyEfEAAADw/w//Dw==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "maduro-avion-left"
+    },
     "anim1": {
         "namespace": "myAnimations",
         "id": "anim1",

@@ -2930,6 +2930,44 @@ d199999968888888886666886999888666911688611988888888869999998886666668..c9......
 ...............................................................................................................................................................
 ...............................................................................................................................................................
 `;
+            case "image32":
+            case "maduro-avion-right":return img`
+. . . . . . . . f f f f f . . . 
+. . . . . . f f f f c f f f . . 
+. . . . . f f c f f f c c f f . 
+. . . . f f f c f f c f f f f . 
+. . . . f c c f c f f f f f f f 
+. . . . f f f c f c f f d f f f 
+. . . . f f f f f f f d d f f f 
+f f . . f f d d f b f d d f f f 
+f 5 f . f f d d d 1 f d d c f . 
+f 1 8 f . f f f d d d c c f . . 
+f 2 2 2 f . . . f d d d 1 f . . 
+. f f f f f f f f f f f f f . . 
+f 1 1 1 1 1 f 1 1 1 1 1 1 9 f . 
+f 1 1 1 1 f 1 1 1 f 1 1 1 9 9 f 
+f 1 1 1 f 1 1 1 f 1 1 1 1 1 1 f 
+. f f f f f f f f f f f f f f . 
+`;
+            case "image33":
+            case "maduro-avion-left":return img`
+. . . f f f f f . . . . . . . . 
+. . f f f c f f f f . . . . . . 
+. f f c c f f f c f f . . . . . 
+. f f f f c f f c f f f . . . . 
+f f f f f f f c f c c f . . . . 
+f f f d f f c f c f f f . . . . 
+f f f d d f f f f f f f . . . . 
+f f f d d f b f d d f f . . f f 
+. f c d d f 1 d d d f f . f 5 f 
+. . f c c d d d f f f . f 8 1 f 
+. . f 1 d d d f . . . f 2 2 2 f 
+. . f f f f f f f f f f f f f . 
+. f 9 1 1 1 1 1 1 f 1 1 1 1 1 f 
+f 9 9 1 1 1 f 1 1 1 f 1 1 1 1 f 
+f 1 1 1 1 1 1 f 1 1 1 f 1 1 1 f 
+. f f f f f f f f f f f f f f . 
+`;
         }
         return null;
     })
