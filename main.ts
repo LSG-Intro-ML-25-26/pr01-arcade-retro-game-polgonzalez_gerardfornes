@@ -93,7 +93,8 @@ function cinematica_lore() {
                 `)
     }
     
-    game.showLongText("En un movimiento que nadie vio venir —principalmente porque no tiene sentido legal—, el rubio más famoso de Florida ha 'adquirido' un activo internacional de gran tamaño.", DialogLayout.Bottom)
+    game.showLongText(`En un movimiento que nadie vio venir —principalmente 
+ porque no tiene sentido legal—, el rubio más famoso de Florida ha 'adquirido' un activo internacional de gran tamaño.`, DialogLayout.Bottom)
     if (assets.image`
             maduropurple
             `) {
@@ -133,6 +134,7 @@ function cinematica_lore() {
         game.showLongText("¡EMPIEZA LA MISIÓN!", DialogLayout.Center)
     }
     
+    selector_de_mapa()
 }
 
 function selector_de_mapa() {

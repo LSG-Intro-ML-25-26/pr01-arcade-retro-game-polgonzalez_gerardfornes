@@ -87,7 +87,7 @@ def cinematica_lore():
             scene.set_background_image(assets.image("""
                 trumpworld
                 """))
-        game.show_long_text("En un movimiento que nadie vio venir —principalmente porque no tiene sentido legal—, el rubio más famoso de Florida ha 'adquirido' un activo internacional de gran tamaño.",
+        game.show_long_text("En un movimiento que nadie vio venir —principalmente \n porque no tiene sentido legal—, el rubio más famoso de Florida ha 'adquirido' un activo internacional de gran tamaño.",
             DialogLayout.BOTTOM)
         if assets.image("""
             maduropurple
@@ -125,6 +125,7 @@ def cinematica_lore():
                 """))
             pause(2000)
             game.show_long_text("¡EMPIEZA LA MISIÓN!", DialogLayout.CENTER)
+        selector_de_mapa()
 
 def selector_de_mapa():
     global juego_empezado, nena, bot, cursor, icono1, icono2, icono3
