@@ -75,65 +75,64 @@ function menu_inicial() {
 
 function cinematica_lore() {
     if (assets.image`
-        mapausa
-        `) {
-        scene.setBackgroundImage(assets.image`
             mapausa
-            `)
+            `) {
+        scene.setBackgroundImage(assets.image`
+                mapausa
+                `)
     } else {
         scene.setBackgroundColor(15)
     }
     
-    game.showLongText("El mundo pensaba que lo había visto todo...", DialogLayout.Bottom)
+    game.showLongText("El mundo pensaba que lo había visto todo, hasta que el 'Caudillo de Wall Street' decidió que la diplomacia era demasiado lenta y aburrida.", DialogLayout.Bottom)
     if (assets.image`
-        trumpworld
-        `) {
-        scene.setBackgroundImage(assets.image`
             trumpworld
-            `)
+            `) {
+        scene.setBackgroundImage(assets.image`
+                trumpworld
+                `)
     }
     
-    game.showLongText("En un movimiento que nadie vio venir...", DialogLayout.Bottom)
+    game.showLongText("En un movimiento que nadie vio venir —principalmente porque no tiene sentido legal—, el rubio más famoso de Florida ha 'adquirido' un activo internacional de gran tamaño.", DialogLayout.Bottom)
     if (assets.image`
-        maduropurple
-        `) {
-        scene.setBackgroundImage(assets.image`
             maduropurple
-            `)
+            `) {
+        scene.setBackgroundImage(assets.image`
+                maduropurple
+                `)
     }
     
-    game.showLongText("Sí... Maduro ha sido secuestrado...", DialogLayout.Bottom)
+    game.showLongText("Sí... Maduro ha sido secuestrado. Narcolás Maduro AKA 'El Exiliado del Caribe', ahora es propiedad privada.", DialogLayout.Bottom)
     if (assets.image`
-        madurobros
-        `) {
-        scene.setBackgroundImage(assets.image`
             madurobros
-            `)
+            `) {
+        scene.setBackgroundImage(assets.image`
+                madurobros
+                `)
     }
     
-    game.showLongText("La situación es insostenible...", DialogLayout.Bottom)
+    game.showLongText("La situación es insostenible. El Servicio Secreto está confundido, el SEBIN está en pánico y Twitter... bueno, X... como quieran llamarle, sigue igual de tóxico que siempre.", DialogLayout.Bottom)
     if (assets.image`
-        cara feliz
-        `) {
-        scene.setBackgroundImage(assets.image`
             cara feliz
-            `)
+            `) {
+        scene.setBackgroundImage(assets.image`
+                cara feliz
+                `)
     }
     
-    game.showLongText("Tu trabajo no es juzgar...", DialogLayout.Bottom)
-    game.showLongText("Tu misión es intervenir...", DialogLayout.Bottom)
-    game.showLongText("Prepárate para la extracción...", DialogLayout.Bottom)
+    game.showLongText("Tu trabajo no es juzgar la legalidad de esta locura, ni velar por los intereses de ningún país en concreto.", DialogLayout.Bottom)
+    game.showLongText("Tu misión es intervenir antes de que 'Tu Patito Favorito' A.K.A YFD (Your Favorite Duck) aplique su política de America First convirtiendo a Maduro en el primer souvenir humano de su nueva franquicia.", DialogLayout.Bottom)
+    game.showLongText("Prepárate para la extracción más políticamente incorrecta de la historia. Inserte moneda para evitar la Tercera Guerra Mundial.", DialogLayout.Bottom)
     if (assets.image`
-        pokemon
-        `) {
-        scene.setBackgroundImage(assets.image`
             pokemon
-            `)
+            `) {
+        scene.setBackgroundImage(assets.image`
+                pokemon
+                `)
         pause(2000)
         game.showLongText("¡EMPIEZA LA MISIÓN!", DialogLayout.Center)
     }
     
-    selector_de_mapa()
 }
 
 function selector_de_mapa() {
@@ -943,5 +942,4 @@ game.onUpdate(function debug_coordenadas_mapa() {
     }
     
 })
-// menu_inicial()
-iniciar_nivel_3()
+menu_inicial()

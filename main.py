@@ -71,56 +71,60 @@ def menu_inicial():
     cinematica_lore()
 
 def cinematica_lore():
-    if assets.image("""
-        mapausa
-        """):
-        scene.set_background_image(assets.image("""
+        if assets.image("""
             mapausa
-            """))
-    else:
-        scene.set_background_color(15)
-    game.show_long_text("El mundo pensaba que lo había visto todo...",
-        DialogLayout.BOTTOM)
-    if assets.image("""
-        trumpworld
-        """):
-        scene.set_background_image(assets.image("""
+            """):
+            scene.set_background_image(assets.image("""
+                mapausa
+                """))
+        else:
+            scene.set_background_color(15)
+        game.show_long_text("El mundo pensaba que lo había visto todo, hasta que el 'Caudillo de Wall Street' decidió que la diplomacia era demasiado lenta y aburrida.",
+            DialogLayout.BOTTOM)
+        if assets.image("""
             trumpworld
-            """))
-    game.show_long_text("En un movimiento que nadie vio venir...",
-        DialogLayout.BOTTOM)
-    if assets.image("""
-        maduropurple
-        """):
-        scene.set_background_image(assets.image("""
+            """):
+            scene.set_background_image(assets.image("""
+                trumpworld
+                """))
+        game.show_long_text("En un movimiento que nadie vio venir —principalmente porque no tiene sentido legal—, el rubio más famoso de Florida ha 'adquirido' un activo internacional de gran tamaño.",
+            DialogLayout.BOTTOM)
+        if assets.image("""
             maduropurple
-            """))
-    game.show_long_text("Sí... Maduro ha sido secuestrado...", DialogLayout.BOTTOM)
-    if assets.image("""
-        madurobros
-        """):
-        scene.set_background_image(assets.image("""
+            """):
+            scene.set_background_image(assets.image("""
+                maduropurple
+                """))
+        game.show_long_text("Sí... Maduro ha sido secuestrado. Narcolás Maduro AKA 'El Exiliado del Caribe', ahora es propiedad privada.",
+            DialogLayout.BOTTOM)
+        if assets.image("""
             madurobros
-            """))
-    game.show_long_text("La situación es insostenible...", DialogLayout.BOTTOM)
-    if assets.image("""
-        cara feliz
-        """):
-        scene.set_background_image(assets.image("""
+            """):
+            scene.set_background_image(assets.image("""
+                madurobros
+                """))
+        game.show_long_text("La situación es insostenible. El Servicio Secreto está confundido, el SEBIN está en pánico y Twitter... bueno, X... como quieran llamarle, sigue igual de tóxico que siempre.",
+            DialogLayout.BOTTOM)
+        if assets.image("""
             cara feliz
-            """))
-    game.show_long_text("Tu trabajo no es juzgar...", DialogLayout.BOTTOM)
-    game.show_long_text("Tu misión es intervenir...", DialogLayout.BOTTOM)
-    game.show_long_text("Prepárate para la extracción...", DialogLayout.BOTTOM)
-    if assets.image("""
-        pokemon
-        """):
-        scene.set_background_image(assets.image("""
+            """):
+            scene.set_background_image(assets.image("""
+                cara feliz
+                """))
+        game.show_long_text("Tu trabajo no es juzgar la legalidad de esta locura, ni velar por los intereses de ningún país en concreto.",
+            DialogLayout.BOTTOM)
+        game.show_long_text("Tu misión es intervenir antes de que 'Tu Patito Favorito' A.K.A YFD (Your Favorite Duck) aplique su política de America First convirtiendo a Maduro en el primer souvenir humano de su nueva franquicia.",
+            DialogLayout.BOTTOM)
+        game.show_long_text("Prepárate para la extracción más políticamente incorrecta de la historia. Inserte moneda para evitar la Tercera Guerra Mundial.",
+            DialogLayout.BOTTOM)
+        if assets.image("""
             pokemon
-            """))
-        pause(2000)
-        game.show_long_text("¡EMPIEZA LA MISIÓN!", DialogLayout.CENTER)
-    selector_de_mapa()
+            """):
+            scene.set_background_image(assets.image("""
+                pokemon
+                """))
+            pause(2000)
+            game.show_long_text("¡EMPIEZA LA MISIÓN!", DialogLayout.CENTER)
 
 def selector_de_mapa():
     global juego_empezado, nena, bot, cursor, icono1, icono2, icono3
@@ -795,5 +799,4 @@ def debug_coordenadas_mapa():
         mi_cursor.say_text("" + str(col) + ", " + ("" + str(fila)))
 game.on_update(debug_coordenadas_mapa)
 
-#menu_inicial()
-iniciar_nivel_3()
+menu_inicial()
