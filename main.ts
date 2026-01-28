@@ -532,7 +532,7 @@ function iniciar_nivel_3() {
     let meta_avion = sprites.create(assets.image`
             helicopteroruso
             `, SpriteKind.Meta)
-    tiles.placeOnTile(meta_avion, tiles.getTileLocation(200, 10))
+    tiles.placeOnTile(meta_avion, tiles.getTileLocation(220, 10))
     juego_empezado = true
     controller.moveSprite(nena, 100, 100)
     tiempo_inicio = game.runtime()

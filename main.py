@@ -479,7 +479,7 @@ def iniciar_nivel_3():
             helicopteroruso
             """),
         SpriteKind.Meta)
-    tiles.place_on_tile(meta_avion, tiles.get_tile_location(200, 10))
+    tiles.place_on_tile(meta_avion, tiles.get_tile_location(220, 10))
     juego_empezado = True
     controller.move_sprite(nena, 100, 100)
     tiempo_inicio = game.runtime()
