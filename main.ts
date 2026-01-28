@@ -11,6 +11,8 @@ namespace SpriteKind {
 function iniciar_nivel_3() {
     
     nivel_actual = 3
+    music.stopAllSounds()
+    music.play(music.stringPlayable("C5 A B G A F G E ", 300), music.PlaybackMode.LoopingInBackground)
     sprites.destroyAllSpritesOfKind(SpriteKind.Fondo)
     sprites.destroyAllSpritesOfKind(SpriteKind.Cursor)
     sprites.destroyAllSpritesOfKind(SpriteKind.IconoNivel)
@@ -470,6 +472,8 @@ function iniciar_nivel_2() {
     
     nivel_actual = 2
     probabilidad_bomba = 100
+    music.stopAllSounds()
+    music.play(music.stringPlayable("C5 A B G A F G E ", 300), music.PlaybackMode.LoopingInBackground)
     sprites.destroyAllSpritesOfKind(SpriteKind.Fondo)
     sprites.destroyAllSpritesOfKind(SpriteKind.Cursor)
     sprites.destroyAllSpritesOfKind(SpriteKind.IconoNivel)

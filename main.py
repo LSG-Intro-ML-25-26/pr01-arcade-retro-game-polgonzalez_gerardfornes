@@ -10,6 +10,8 @@ class SpriteKind:
 def iniciar_nivel_3():
     global nivel_actual, img_avion, nena, img_heli, bot, meta_avion, juego_empezado, tiempo_inicio
     nivel_actual = 3
+    music.stop_all_sounds()
+    music.play(music.string_playable("C5 A B G A F G E ", 300), music.PlaybackMode.LOOPING_IN_BACKGROUND)
     sprites.destroy_all_sprites_of_kind(SpriteKind.Fondo)
     sprites.destroy_all_sprites_of_kind(SpriteKind.Cursor)
     sprites.destroy_all_sprites_of_kind(SpriteKind.IconoNivel)
@@ -412,6 +414,8 @@ def iniciar_nivel_2():
     global nivel_actual, probabilidad_bomba, img_ola, ola1, ola2, ola3, nena, bot, mySpriteBarco2, l, juego_empezado, tiempo_inicio
     nivel_actual = 2
     probabilidad_bomba = 100
+    music.stop_all_sounds()
+    music.play(music.string_playable("C5 A B G A F G E ", 300), music.PlaybackMode.LOOPING_IN_BACKGROUND)
     sprites.destroy_all_sprites_of_kind(SpriteKind.Fondo)
     sprites.destroy_all_sprites_of_kind(SpriteKind.Cursor)
     sprites.destroy_all_sprites_of_kind(SpriteKind.IconoNivel)
