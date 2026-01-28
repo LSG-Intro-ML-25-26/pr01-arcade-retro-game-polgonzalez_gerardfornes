@@ -7,126 +7,69 @@ class SpriteKind:
     UI = SpriteKind.create()
     Fondo = SpriteKind.create()
     Meta = SpriteKind.create()
-
-bot_mirando_derecha = False
-velocidad3 = 0
-distancia3 = 0
-juego_empezado = False
-tiempo_inicio = 0
-probabilidad_bomba = 100
-
-nivel_desbloqueado = 1
-nivel_actual = 0
-
-nena: Sprite = None
-bot: Sprite = None
-tanque: Sprite = None
-tanque02: Sprite = None
-mySpriteBarco: Sprite = None
-mySpriteBarco2: Sprite = None
-
-cursor: Sprite = None
-
-icono1: Sprite = None
-icono2: Sprite = None
-icono3: Sprite = None
-
-lista_cursores: List[Sprite] = []
-l = 0
-t = 0
-partes_toldo: List[Image] = []
-i = 0
-lista_minas: List[tiles.Location] = []
-tiempo_final = 0
-
-def menu_inicial():
-    global juego_empezado
-    juego_empezado = False
-    info.show_score(False)
+def iniciar_nivel_3():
+    global nivel_actual, img_avion, nena, img_heli, bot, meta_avion, juego_empezado, tiempo_inicio
+    nivel_actual = 3
+    sprites.destroy_all_sprites_of_kind(SpriteKind.Fondo)
+    sprites.destroy_all_sprites_of_kind(SpriteKind.Cursor)
+    sprites.destroy_all_sprites_of_kind(SpriteKind.IconoNivel)
+    sprites.destroy_all_sprites_of_kind(SpriteKind.projectile)
+    sprites.destroy_all_sprites_of_kind(SpriteKind.enemy)
+    sprites.destroy_all_sprites_of_kind(SpriteKind.Meta)
+    scene.set_background_image(None)
+    scene.set_background_color(9)
+    info.show_score(True)
+    info.set_score(0)
+    tiles.set_current_tilemap(tilemap("""
+        nivel03
+        """))
     if assets.image("""
-        escapefromusa
+        maduro-avion-right
         """):
-        scene.set_background_image(assets.image("""
-            escapefromusa
-            """))
-    if assets.image("""
-        bigButtonPressed2
+        img_avion = assets.image("""
+            maduro-avion-right
+            """)
+    elif assets.image("""
+        avion_venezuela_pixelart
         """):
-        boton_play = sprites.create(assets.image("""
-                bigButtonPressed2
-                """),
-            SpriteKind.UI)
-        boton_play.set_position(80, 110)
-        pause(500)
-        while not controller.A.is_pressed():
-            if game.runtime() % 800 < 400:
-                boton_play.say_text("PLAY", 500, False)
-            else:
-                boton_play.say_text("")
-            pause(20)
-        boton_play.destroy()
+        img_avion = assets.image("""
+            avion_venezuela_pixelart
+            """)
     else:
-        while not controller.A.is_pressed():
-            pause(100)
-    cinematica_lore()
-
-def cinematica_lore():
-        if assets.image("""
-            mapausa
-            """):
-            scene.set_background_image(assets.image("""
-                mapausa
-                """))
-        else:
-            scene.set_background_color(15)
-        game.show_long_text("El mundo pensaba que lo había visto todo, hasta que el 'Caudillo de Wall Street' decidió que la diplomacia era demasiado lenta y aburrida.",
-            DialogLayout.BOTTOM)
-        if assets.image("""
-            trumpworld
-            """):
-            scene.set_background_image(assets.image("""
-                trumpworld
-                """))
-        game.show_long_text("En un movimiento que nadie vio venir —principalmente \n porque no tiene sentido legal—, el rubio más famoso de Florida ha 'adquirido' un activo internacional de gran tamaño.",
-            DialogLayout.BOTTOM)
-        if assets.image("""
-            maduropurple
-            """):
-            scene.set_background_image(assets.image("""
-                maduropurple
-                """))
-        game.show_long_text("Sí... Maduro ha sido secuestrado. Narcolás Maduro AKA 'El Exiliado del Caribe', ahora es propiedad privada.",
-            DialogLayout.BOTTOM)
-        if assets.image("""
-            madurobros
-            """):
-            scene.set_background_image(assets.image("""
-                madurobros
-                """))
-        game.show_long_text("La situación es insostenible. El Servicio Secreto está confundido, el SEBIN está en pánico y Twitter... bueno, X... como quieran llamarle, sigue igual de tóxico que siempre.",
-            DialogLayout.BOTTOM)
-        if assets.image("""
-            cara feliz
-            """):
-            scene.set_background_image(assets.image("""
-                cara feliz
-                """))
-        game.show_long_text("Tu trabajo no es juzgar la legalidad de esta locura, ni velar por los intereses de ningún país en concreto.",
-            DialogLayout.BOTTOM)
-        game.show_long_text("Tu misión es intervenir antes de que 'Tu Patito Favorito' A.K.A YFD (Your Favorite Duck) aplique su política de America First convirtiendo a Maduro en el primer souvenir humano de su nueva franquicia.",
-            DialogLayout.BOTTOM)
-        game.show_long_text("Prepárate para la extracción más políticamente incorrecta de la historia. Inserte moneda para evitar la Tercera Guerra Mundial.",
-            DialogLayout.BOTTOM)
-        if assets.image("""
-            pokemon
-            """):
-            scene.set_background_image(assets.image("""
-                pokemon
-                """))
-            pause(2000)
-            game.show_long_text("¡EMPIEZA LA MISIÓN!", DialogLayout.CENTER)
-        selector_de_mapa()
-
+        img_avion = assets.image("""
+            maduro
+            """)
+    nena = sprites.create(img_avion, SpriteKind.player)
+    tiles.place_on_tile(nena, tiles.get_tile_location(25, 10))
+    nena.ay = 0
+    nena.set_stay_in_screen(True)
+    scene.camera_follow_sprite(nena)
+    if assets.image("""
+        helicoptero
+        """):
+        img_heli = assets.image("""
+            helicoptero
+            """)
+    else:
+        img_heli = img("""
+            . . . . . . . .
+            . . . 2 2 2 . .
+            . . 2 2 2 2 2 .
+            . . . . . . . .
+            """)
+    bot = sprites.create(img_heli, SpriteKind.enemy)
+    tiles.place_on_tile(bot, tiles.get_tile_location(5, 10))
+    bot.ay = 0
+    bot.set_bounce_on_wall(True)
+    meta_avion = sprites.create(assets.image("""
+            helicopteroruso
+            """),
+        SpriteKind.Meta)
+    tiles.place_on_tile(meta_avion, tiles.get_tile_location(220, 10))
+    juego_empezado = True
+    controller.move_sprite(nena, 100, 100)
+    tiempo_inicio = game.runtime()
+    nena.say_text("¡A VOLAR!", 1000, True)
 def selector_de_mapa():
     global juego_empezado, nena, bot, cursor, icono1, icono2, icono3
     juego_empezado = False
@@ -151,11 +94,11 @@ def selector_de_mapa():
         mundo_grande
         """):
         tiles.set_current_tilemap(tilemap("""
-            mundo_grande
+            nivel3
             """))
     else:
         tiles.set_current_tilemap(tilemap("""
-            level1
+            nivel4
             """))
     if assets.image("""
         mapamundi2
@@ -211,7 +154,24 @@ def selector_de_mapa():
             icono3.say_text("X", 50000, False)
     game.splash("Elige un nivel")
 
-def on_mapa_overlap(sprite, otherSprite):
+def on_on_overlap(sprite3, otherSprite3):
+    if nena:
+        if nivel_actual != 3:
+            nena.vy = -250
+            if nena.vx > 0:
+                nena.vx = 250
+            else:
+                nena.vx = -250
+sprites.on_overlap(SpriteKind.player, SpriteKind.Trampolin, on_on_overlap)
+
+def on_hit_wall(bomb2, location):
+    global probabilidad_bomba
+    bomb2.destroy(effects.disintegrate, 100)
+    if probabilidad_bomba > 10:
+        probabilidad_bomba += 0 - 10
+scene.on_hit_wall(SpriteKind.projectile, on_hit_wall)
+
+def on_on_overlap2(sprite, otherSprite):
     if controller.A.is_pressed():
         if otherSprite == icono1:
             iniciar_nivel_1()
@@ -229,10 +189,116 @@ def on_mapa_overlap(sprite, otherSprite):
             else:
                 game.splash("BLOQUEADO", "Completa el Nivel 2 primero")
             pause(500)
-sprites.on_overlap(SpriteKind.Cursor, SpriteKind.IconoNivel, on_mapa_overlap)
+sprites.on_overlap(SpriteKind.Cursor, SpriteKind.IconoNivel, on_on_overlap2)
+
+def on_right_pressed():
+    if nena:
+        if nivel_actual == 1:
+            animation.run_image_animation(nena,
+                assets.animation("""
+                    maduro-right0
+                    """),
+                200,
+                True)
+        elif nivel_actual == 2:
+            if assets.image("""
+                maduro-lancha-right
+                """):
+                nena.set_image(assets.image("""
+                    maduro-lancha-right
+                    """))
+        elif nivel_actual == 3:
+            if assets.image("""
+                maduro-avion-right
+                """):
+                nena.set_image(assets.image("""
+                    maduro-avion-right
+                    """))
+controller.right.on_event(ControllerButtonEvent.PRESSED, on_right_pressed)
+
+def on_left_pressed():
+    if nena:
+        if nivel_actual == 1:
+            animation.run_image_animation(nena,
+                assets.animation("""
+                    maduro-left
+                    """),
+                200,
+                True)
+        elif nivel_actual == 2:
+            if assets.image("""
+                maduro-lancha-left
+                """):
+                nena.set_image(assets.image("""
+                    maduro-lancha-left
+                    """))
+        elif nivel_actual == 3:
+            if assets.image("""
+                maduro-avion-left
+                """):
+                nena.set_image(assets.image("""
+                    maduro-avion-left
+                    """))
+controller.left.on_event(ControllerButtonEvent.PRESSED, on_left_pressed)
+
+def game_over_personalizado():
+    global juego_empezado
+    juego_empezado = False
+    music.stop_all_sounds()
+    music.play(music.melody_playable(music.wawawawaa), music.PlaybackMode.IN_BACKGROUND)
+    game.splash("¡HAS MUERTO!", "Volviendo al mapa...")
+    selector_de_mapa()
+def cinematica_final():
+    global juego_empezado
+    juego_empezado = False
+    info.show_score(False)
+    music.stop_all_sounds()
+    music.play(music.melody_playable(music.power_up), music.PlaybackMode.IN_BACKGROUND)
+    sprites.destroy_all_sprites_of_kind(SpriteKind.player)
+    sprites.destroy_all_sprites_of_kind(SpriteKind.enemy)
+    sprites.destroy_all_sprites_of_kind(SpriteKind.projectile)
+    sprites.destroy_all_sprites_of_kind(SpriteKind.Meta)
+    scene.camera_follow_sprite(None)
+    scene.center_camera_at(80, 60)
+    tiles.set_current_tilemap(None)
+    if assets.image("""
+        madrerusia
+        """):
+        scene.set_background_image(assets.image("""
+            madrerusia
+            """))
+    else:
+        scene.set_background_color(2)
+    pause(500)
+    game.show_long_text("¡HEMOS GANADO!", DialogLayout.CENTER)
+    game.show_long_text("Hemos llegado sanos y salvos a la Madre Rusia.",
+        DialogLayout.BOTTOM)
+    game.splash("Volver al Menú")
+    menu_inicial()
+
+def on_on_overlap3(sprite2, otherSprite2):
+    global tiempo_final, nivel_desbloqueado
+    tiempo_final = info.score()
+    if nivel_actual == 1:
+        game.splash("¡NIVEL 1 SUPERADO!",
+            "Tiempo: " + ("" + str(tiempo_final)) + "s")
+        if nivel_desbloqueado < 2:
+            nivel_desbloqueado = 2
+            game.splash("¡NIVEL 2 DESBLOQUEADO!")
+        selector_de_mapa()
+    elif nivel_actual == 2:
+        game.splash("¡NIVEL 2 SUPERADO!",
+            "Tiempo: " + ("" + str(tiempo_final)) + "s")
+        if nivel_desbloqueado < 3:
+            nivel_desbloqueado = 3
+            game.splash("¡NIVEL 3 DESBLOQUEADO!")
+        selector_de_mapa()
+    elif nivel_actual == 3:
+        cinematica_final()
+sprites.on_overlap(SpriteKind.player, SpriteKind.Meta, on_on_overlap3)
 
 def iniciar_nivel_1():
-    global nivel_actual, probabilidad_bomba, tiempo_inicio, tanque, tanque02, mySpriteBarco, bot, nena, i, t, juego_empezado
+    global nivel_actual, probabilidad_bomba, tiempo_inicio, tanque, tanque02, mySpriteBarco, bot, nena, lista_minas2, i, partes_toldo2, t, juego_empezado
     nivel_actual = 1
     probabilidad_bomba = 0
     sprites.destroy_all_sprites_of_kind(SpriteKind.Fondo)
@@ -242,6 +308,8 @@ def iniciar_nivel_1():
     scene.set_background_image(None)
     info.show_score(True)
     info.set_score(0)
+    music.stop_all_sounds()
+    music.play(music.string_playable("C5 A B G A F G E ", 300), music.PlaybackMode.LOOPING_IN_BACKGROUND)
     tiempo_inicio = game.runtime()
     tiles.set_current_tilemap(tilemap("""
         prova
@@ -335,8 +403,13 @@ def iniciar_nivel_1():
             200,
             True)
 
+def on_on_overlap4(player2, bomb):
+    bomb.destroy(effects.fire, 100)
+    game_over_personalizado()
+sprites.on_overlap(SpriteKind.player, SpriteKind.projectile, on_on_overlap4)
+
 def iniciar_nivel_2():
-    global nivel_actual, probabilidad_bomba, nena, bot, mySpriteBarco2, l, juego_empezado, tiempo_inicio
+    global nivel_actual, probabilidad_bomba, img_ola, ola1, ola2, ola3, nena, bot, mySpriteBarco2, l, juego_empezado, tiempo_inicio
     nivel_actual = 2
     probabilidad_bomba = 100
     sprites.destroy_all_sprites_of_kind(SpriteKind.Fondo)
@@ -349,7 +422,6 @@ def iniciar_nivel_2():
     tiles.set_current_tilemap(tilemap("""
         nivel02
         """))
-    img_ola = None
     if assets.image("""
         ola
         """):
@@ -401,7 +473,7 @@ def iniciar_nivel_2():
     bot.ay = 350
     bot.set_bounce_on_wall(True)
     mySpriteBarco2 = sprites.create(assets.image("""
-            barco venezuela
+            avionvenezuela
             """),
         SpriteKind.Meta)
     tiles.place_on_tile(mySpriteBarco2, tiles.get_tile_location(240, 10))
@@ -418,266 +490,146 @@ def iniciar_nivel_2():
     juego_empezado = True
     controller.move_sprite(nena, 100, 0)
     tiempo_inicio = game.runtime()
-
-def iniciar_nivel_3():
-    global nivel_actual, nena, bot, juego_empezado, tiempo_inicio
-    nivel_actual = 3
-    sprites.destroy_all_sprites_of_kind(SpriteKind.Fondo)
-    sprites.destroy_all_sprites_of_kind(SpriteKind.Cursor)
-    sprites.destroy_all_sprites_of_kind(SpriteKind.IconoNivel)
-    sprites.destroy_all_sprites_of_kind(SpriteKind.projectile)
-    sprites.destroy_all_sprites_of_kind(SpriteKind.enemy)
-    sprites.destroy_all_sprites_of_kind(SpriteKind.Meta)
-    scene.set_background_image(None)
-    scene.set_background_color(9)
-    info.show_score(True)
-    info.set_score(0)
-    tiles.set_current_tilemap(tilemap("""
-        nivel03
-        """))
-    img_avion = None
-    if assets.image("""
-        maduro-avion-right
-        """):
-        img_avion = assets.image("""
-            maduro-avion-right
-            """)
-    elif assets.image("""
-        avion_venezuela_pixelart
-        """):
-        img_avion = assets.image("""
-            avion_venezuela_pixelart
-            """)
-    else:
-        img_avion = assets.image("""
-            maduro
-            """)
-    nena = sprites.create(img_avion, SpriteKind.player)
-    tiles.place_on_tile(nena, tiles.get_tile_location(25, 10))
-    nena.ay = 0
-    nena.set_stay_in_screen(True)
-    scene.camera_follow_sprite(nena)
-    img_heli = None
-    if assets.image("""
-        helicoptero
-        """):
-        img_heli = assets.image("""
-            helicoptero
-            """)
-    else:
-        img_heli = img("""
-            . . . . . . . .
-            . . . 2 2 2 . .
-            . . 2 2 2 2 2 .
-            . . . . . . . .
-            """)
-    bot = sprites.create(img_heli, SpriteKind.enemy)
-    tiles.place_on_tile(bot, tiles.get_tile_location(5, 10))
-    bot.ay = 0
-    bot.set_bounce_on_wall(True)
-    meta_avion = sprites.create(assets.image("""
-            helicopteroruso
-            """),
-        SpriteKind.Meta)
-    tiles.place_on_tile(meta_avion, tiles.get_tile_location(220, 10))
-    juego_empezado = True
-    controller.move_sprite(nena, 100, 100)
-    tiempo_inicio = game.runtime()
-    nena.say_text("¡A VOLAR!", 1000, True)
-
-def game_over_personalizado():
+def menu_inicial():
     global juego_empezado
-    juego_empezado = False
-    game.splash("¡HAS MUERTO!", "Volviendo al mapa...")
-    selector_de_mapa()
-
-def cinematica_final():
-    global juego_empezado
-
     juego_empezado = False
     info.show_score(False)
-    sprites.destroy_all_sprites_of_kind(SpriteKind.player)
-    sprites.destroy_all_sprites_of_kind(SpriteKind.enemy)
-    sprites.destroy_all_sprites_of_kind(SpriteKind.projectile)
-    sprites.destroy_all_sprites_of_kind(SpriteKind.Meta)
-    scene.camera_follow_sprite(None)
-    scene.center_camera_at(80, 60)
-    tiles.set_current_tilemap(None)
+    music.stop_all_sounds()
+    music.play(music.string_playable("E D C D E E E - ", 120), music.PlaybackMode.LOOPING_IN_BACKGROUND)
     if assets.image("""
-        madrerusia
+        escapefromusa
         """):
         scene.set_background_image(assets.image("""
-            madrerusia
+            escapefromusa
             """))
-    else:
-        scene.set_background_color(2)
-    pause(500)
-    game.show_long_text("¡HEMOS GANADO!", DialogLayout.CENTER)
-    game.show_long_text("Hemos llegado sanos y salvos a la Madre Rusia.",
-        DialogLayout.BOTTOM)
-    game.splash("Volver al Menú")
-    menu_inicial()
-
-def on_nivel_completado(sprite2, otherSprite2):
-    global tiempo_final, nivel_desbloqueado
-    tiempo_final = info.score()
-    if nivel_actual == 1:
-        game.splash("¡NIVEL 1 SUPERADO!",
-            "Tiempo: " + ("" + str(tiempo_final)) + "s")
-        if nivel_desbloqueado < 2:
-            nivel_desbloqueado = 2
-            game.splash("¡NIVEL 2 DESBLOQUEADO!")
-        selector_de_mapa()
-    elif nivel_actual == 2:
-        game.splash("¡NIVEL 2 SUPERADO!",
-            "Tiempo: " + ("" + str(tiempo_final)) + "s")
-        if nivel_desbloqueado < 3:
-            nivel_desbloqueado = 3
-            game.splash("¡NIVEL 3 DESBLOQUEADO!")
-        selector_de_mapa()
-    elif nivel_actual == 3:
-        cinematica_final()
-sprites.on_overlap(SpriteKind.player, SpriteKind.Meta, on_nivel_completado)
-
-def on_on_overlap(sprite3, otherSprite3):
-    if nena:
-        if nivel_actual != 3:
-            nena.vy = -250
-            if nena.vx > 0:
-                nena.vx = 250
+    if assets.image("""
+        bigButtonPressed2
+        """):
+        boton_play = sprites.create(assets.image("""
+                bigButtonPressed2
+                """),
+            SpriteKind.UI)
+        boton_play.set_position(80, 110)
+        pause(500)
+        while not (controller.A.is_pressed()):
+            if game.runtime() % 800 < 400:
+                boton_play.say_text("PLAY", 500, False)
             else:
-                nena.vx = -250
-sprites.on_overlap(SpriteKind.player, SpriteKind.Trampolin, on_on_overlap)
-
-def on_right_pressed():
-    if nena:
-        if nivel_actual == 1:
-            animation.run_image_animation(nena,
-                assets.animation("""
-                    maduro-right0
-                    """),
-                200,
-                True)
-        elif nivel_actual == 2:
-            if assets.image("""
-                maduro-lancha-right
-                """):
-                nena.set_image(assets.image("""
-                    maduro-lancha-right
-                    """))
-        elif nivel_actual == 3:
-            if assets.image("""
-                maduro-avion-right
-                """):
-                nena.set_image(assets.image("""
-                    maduro-avion-right
-                    """))
-controller.right.on_event(ControllerButtonEvent.PRESSED, on_right_pressed)
-
-def on_left_pressed():
-    if nena:
-        if nivel_actual == 1:
-            animation.run_image_animation(nena,
-                assets.animation("""
-                    maduro-left
-                    """),
-                200,
-                True)
-        elif nivel_actual == 2:
-            if assets.image("""
-                maduro-lancha-left
-                """):
-                nena.set_image(assets.image("""
-                    maduro-lancha-left
-                    """))
-        elif nivel_actual == 3:
-            if assets.image("""
-                maduro-avion-left
-                """):
-                nena.set_image(assets.image("""
-                    maduro-avion-left
-                    """))
-controller.left.on_event(ControllerButtonEvent.PRESSED, on_left_pressed)
-
+                boton_play.say_text("")
+            pause(20)
+        boton_play.destroy()
+    else:
+        while not (controller.A.is_pressed()):
+            pause(100)
+    cinematica_lore()
 def on_a_pressed():
     if nivel_actual != 3:
         if nena and nena.is_hitting_tile(CollisionDirection.BOTTOM):
             nena.vy = -155
+            music.play(music.melody_playable(music.jump_up), music.PlaybackMode.IN_BACKGROUND)
+
+def on_on_overlap5(sprite22, otherSprite22):
+    game_over_personalizado()
+sprites.on_overlap(SpriteKind.player, SpriteKind.enemy, on_on_overlap5)
+
+def cinematica_lore():
+    if assets.image("""
+        mapausa
+        """):
+        scene.set_background_image(assets.image("""
+            mapausa
+            """))
+    else:
+        scene.set_background_color(15)
+    game.show_long_text("El mundo pensaba que lo había visto todo, hasta que el 'Caudillo de Wall Street' decidió que la diplomacia era demasiado lenta y aburrida.",
+        DialogLayout.BOTTOM)
+    if assets.image("""
+        trumpworld
+        """):
+        scene.set_background_image(assets.image("""
+            trumpworld
+            """))
+    game.show_long_text("""
+            En un movimiento que nadie vio venir —principalmente
+            porque no tiene sentido legal—, el rubio más famoso de Florida ha 'adquirido' un activo internacional de gran tamaño.
+            """,
+        DialogLayout.BOTTOM)
+    if assets.image("""
+        maduropurple
+        """):
+        scene.set_background_image(assets.image("""
+            maduropurple
+            """))
+    game.show_long_text("Sí... Maduro ha sido secuestrado. Narcolás Maduro AKA 'El Exiliado del Caribe', ahora es propiedad privada.",
+        DialogLayout.BOTTOM)
+    if assets.image("""
+        madurobros
+        """):
+        scene.set_background_image(assets.image("""
+            madurobros
+            """))
+    game.show_long_text("La situación es insostenible. El Servicio Secreto está confundido, el SEBIN está en pánico y Twitter... bueno, X... como quieran llamarle, sigue igual de tóxico que siempre.",
+        DialogLayout.BOTTOM)
+    if assets.image("""
+        cara feliz
+        """):
+        scene.set_background_image(assets.image("""
+            cara feliz
+            """))
+    game.show_long_text("Tu trabajo no es juzgar la legalidad de esta locura, ni velar por los intereses de ningún país en concreto.",
+        DialogLayout.BOTTOM)
+    game.show_long_text("Tu misión es intervenir antes de que 'Tu Patito Favorito' A.K.A YFD (Your Favorite Duck) aplique su política de America First convirtiendo a Maduro en el primer souvenir humano de su nueva franquicia.",
+        DialogLayout.BOTTOM)
+    game.show_long_text("Prepárate para la extracción más políticamente incorrecta de la historia. Inserte moneda para evitar la Tercera Guerra Mundial.",
+        DialogLayout.BOTTOM)
+    if assets.image("""
+        pokemon
+        """):
+        scene.set_background_image(assets.image("""
+            pokemon
+            """))
+        pause(2000)
+        game.show_long_text("¡EMPIEZA LA MISIÓN!", DialogLayout.CENTER)
+    selector_de_mapa()
+lista_cursores2: List[Sprite] = []
+bot_mirando_derecha = False
+velocidad3 = 0
+distancia3 = 0
+l = 0
+mySpriteBarco2: Sprite = None
+ola3: Sprite = None
+ola2: Sprite = None
+ola1: Sprite = None
+img_ola: Image = None
+t = 0
+partes_toldo2: List[Image] = []
+i = 0
+lista_minas2: List[tiles.Location] = []
+mySpriteBarco: Sprite = None
+tanque02: Sprite = None
+tanque: Sprite = None
+tiempo_final = 0
+icono3: Sprite = None
+icono2: Sprite = None
+icono1: Sprite = None
+cursor: Sprite = None
+tiempo_inicio = 0
+juego_empezado = False
+meta_avion: Sprite = None
+img_heli: Image = None
+img_avion: Image = None
+nivel_desbloqueado = 0
+probabilidad_bomba = 0
+lista_minas: List[number] = []
+partes_toldo: List[number] = []
+lista_cursores: List[number] = []
+bot: Sprite = None
+nena: Sprite = None
+nivel_actual = 0
+probabilidad_bomba = 100
+nivel_desbloqueado = 1
 controller.A.on_event(ControllerButtonEvent.PRESSED, on_a_pressed)
 controller.up.on_event(ControllerButtonEvent.PRESSED, on_a_pressed)
-
-def on_on_overlap2(sprite22, otherSprite22):
-    game_over_personalizado()
-sprites.on_overlap(SpriteKind.player, SpriteKind.enemy, on_on_overlap2)
-
-def generar_bomba():
-    if juego_empezado and nivel_actual == 2 and randint(0, 100) < probabilidad_bomba:
-        cam_x = scene.camera_property(CameraProperty.X)
-        cam_top = scene.camera_property(CameraProperty.TOP)
-        img_bomba = None
-        if assets.image("""
-            bomba
-            """):
-            img_bomba = assets.image("""
-                bomba
-                """)
-        else:
-            img_bomba = img("""
-                2 2 2 2
-                2 2 2 2
-                2 2 2 2
-                2 2 2 2
-                """)
-        bomba = sprites.create(img_bomba, SpriteKind.projectile)
-        bomba.set_position(randint(cam_x - 100, cam_x + 100), cam_top)
-        bomba.vy = 100
-        bomba.z = 100
-        bomba.set_flag(SpriteFlag.AUTO_DESTROY, True)
-game.on_update_interval(1000, generar_bomba)
-
-def disparar_helicoptero():
-    if juego_empezado and nivel_actual == 3 and bot:
-        img_bala = None
-        if assets.image("""
-            misil
-            """):
-            img_bala = assets.image("""
-                misil
-                """)
-        else:
-            img_bala = img("""
-                2 2
-                2 2
-                """)
-        misil = sprites.create(img_bala, SpriteKind.projectile)
-        offset_x = 0
-        if nena.x < bot.x:
-            offset_x = -70
-        else:
-            offset_x = 70
-        misil.set_position(bot.x + offset_x, bot.y + 5)
-        dx = nena.x - misil.x
-        dy = nena.y - misil.y
-        angulo = Math.atan2(dy, dx)
-        velocidad_disparo = 200
-        misil.vx = Math.cos(angulo) * velocidad_disparo
-        misil.vy = Math.sin(angulo) * velocidad_disparo
-        misil.z = 95
-        misil.lifespan = 3000
-game.on_update_interval(2500, disparar_helicoptero)
-
-def on_player_hit_bomb(player, bomb):
-    bomb.destroy(effects.fire, 100)
-    game_over_personalizado()
-sprites.on_overlap(SpriteKind.player, SpriteKind.projectile, on_player_hit_bomb)
-
-def on_bomb_hit_wall(bomb2, location):
-    global probabilidad_bomba
-    bomb2.destroy(effects.disintegrate, 100)
-    if probabilidad_bomba > 10:
-        probabilidad_bomba -= 10
-scene.on_hit_wall(SpriteKind.projectile, on_bomb_hit_wall)
-
 if assets.tile("""
     nube02
     """):
@@ -703,14 +655,15 @@ tiles_petroleo = [assets.tile("""
 tile_mina = assets.tile("""
     interrogacion
     """)
+menu_inicial()
 
 def on_on_update():
-    global nena, distancia3, velocidad3, bot_mirando_derecha
+    global distancia3, velocidad3, bot_mirando_derecha
     if juego_empezado:
         tiempo_actual = game.runtime()
         segundos = int((tiempo_actual - tiempo_inicio) / 1000)
         info.set_score(segundos)
-    if not nena:
+    if not (nena):
         return
     if juego_empezado and nivel_actual != 3:
         loc_actual = nena.tilemap_location()
@@ -780,24 +733,79 @@ def on_on_update():
             else:
                 velocidad3 = 40
             if nena.x < bot.x:
-                bot.vx = -velocidad3
+                bot.vx = 0 - velocidad3
             else:
                 bot.vx = velocidad3
             if nena.y < bot.y:
-                bot.vy = -velocidad3
+                bot.vy = 0 - velocidad3
             else:
                 bot.vy = velocidad3
             if bot.is_hitting_tile(CollisionDirection.LEFT) or bot.is_hitting_tile(CollisionDirection.RIGHT):
-                bot.vx = -bot.vx
+                bot.vx = 0 - bot.vx
 game.on_update(on_on_update)
 
-def debug_coordenadas_mapa():
+def on_on_update2():
+    global lista_cursores2
     lista_cursores2 = sprites.all_of_kind(SpriteKind.Cursor)
     if len(lista_cursores2) > 0:
         mi_cursor = lista_cursores2[0]
         col = int(mi_cursor.x / 16)
         fila = int(mi_cursor.y / 16)
         mi_cursor.say_text("" + str(col) + ", " + ("" + str(fila)))
-game.on_update(debug_coordenadas_mapa)
+game.on_update(on_on_update2)
 
-menu_inicial()
+def on_update_interval():
+    if juego_empezado and nivel_actual == 3 and bot:
+        img_bala = None
+        if assets.image("""
+            misil
+            """):
+            img_bala = assets.image("""
+                misil
+                """)
+        else:
+            img_bala = img("""
+                2 2
+                2 2
+                """)
+        misil = sprites.create(img_bala, SpriteKind.projectile)
+        offset_x = 0
+        if nena.x < bot.x:
+            offset_x = -70
+        else:
+            offset_x = 70
+        misil.set_position(bot.x + offset_x, bot.y + 5)
+        dx = nena.x - misil.x
+        dy = nena.y - misil.y
+        angulo = Math.atan2(dy, dx)
+        velocidad_disparo = 200
+        misil.vx = Math.cos(angulo) * velocidad_disparo
+        misil.vy = Math.sin(angulo) * velocidad_disparo
+        misil.z = 95
+        misil.lifespan = 3000
+game.on_update_interval(2500, on_update_interval)
+
+def on_update_interval2():
+    if juego_empezado and nivel_actual == 2 and randint(0, 100) < probabilidad_bomba:
+        cam_x = scene.camera_property(CameraProperty.X)
+        cam_top = scene.camera_property(CameraProperty.TOP)
+        img_bomba = None
+        if assets.image("""
+            bomba
+            """):
+            img_bomba = assets.image("""
+                bomba
+                """)
+        else:
+            img_bomba = img("""
+                2 2 2 2
+                2 2 2 2
+                2 2 2 2
+                2 2 2 2
+                """)
+        bomba = sprites.create(img_bomba, SpriteKind.projectile)
+        bomba.set_position(randint(cam_x - 100, cam_x + 100), cam_top)
+        bomba.vy = 100
+        bomba.z = 100
+        bomba.set_flag(SpriteFlag.AUTO_DESTROY, True)
+game.on_update_interval(1000, on_update_interval2)
